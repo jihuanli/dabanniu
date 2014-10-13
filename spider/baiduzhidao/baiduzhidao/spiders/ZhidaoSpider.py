@@ -17,12 +17,12 @@ import urllib
 #sys.setdefaultencoding("utf-8")
 
 class ZhidaoSpider(Spider):
-    spider_name = "zhidao"
+    name = "zhidao"
     allowed_domains = ["zhidao.baidu.com"]
     zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
     #result filename format: "prefix + product_id + task_id + .sql"
     result_filename_prefix = "~/app-root/data/";
-    result_filenname_suffix = spider_name + ".sql"
+    result_filenname_suffix = name + ".sql"
     #url match pattern
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
     view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
@@ -34,31 +34,13 @@ class ZhidaoSpider(Spider):
         self.have_fetch_set.clear()
 
         task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-        task_data = {}
-        task_data["task_id"] = task_json_data[0]['task_id']
-        task_data["product_id"] = task_json_data[0]['product_id']
-        task_data["keyword"] = task_json_data[0]["keyword"]
+        meta = {}
+        meta["task_id"] = task_json_data[0]['task_id']
+        meta["product_id"] = task_json_data[0]['product_id']
+        meta["keyword"] = task_json_data[0]["keyword"]
         start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
         print start_url
-        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
-
-        task_json_data = [{'task_id':"111",'product_id':"51371",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-        task_data = {}
-        task_data["task_id"] = task_json_data[0]['task_id']
-        task_data["product_id"] = task_json_data[0]['product_id']
-        task_data["keyword"] = task_json_data[0]["keyword"]
-        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
-        print start_url
-        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
-
-        task_json_data = [{'task_id':"110",'product_id':"51372",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-        task_data = {}
-        task_data["task_id"] = task_json_data[0]['task_id']
-        task_data["product_id"] = task_json_data[0]['product_id']
-        task_data["keyword"] = task_json_data[0]["keyword"]
-        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
-        print start_url
-        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
+        yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
     def parse_list_page(self, response):
         hxs = Selector(response)
@@ -270,9 +252,11 @@ class ZhidaoSpider(Spider):
             if not rq['likeNum']:
                 rq['likeNum'] = 0
             yield rq
-        def parse(self, response):
-            meta=response.meta
-            if not meta.get("product_id"):
-                print "Error... missing product_id"
-            print meta.get("product_id")
-            return self.parse_list_page(response)
+    def parse(self, response):
+        print 1
+        meta=response.meta
+        print 2 
+        if not meta.get("product_id"):
+            print "Error... missing product_id"
+        print meta.get("product_id")
+        return self.parse_list_page(response)

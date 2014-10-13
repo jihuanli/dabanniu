@@ -5499,3 +5499,71 @@
 	    self.port.stopListening()
 	exceptions.AttributeError: WebService instance has no attribute 'port'
 	
+2014-10-13 15:33:27+0800 [zhidao] ERROR: Spider error processing <GET http://zhidao.baidu.com/search?word=Kans/%BA%AB%CA%F8%20%E9%CF%E9%AD%D0%B6%D7%B1%CB%AE>
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 382, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 490, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/spider.py", line 56, in parse
+	    raise NotImplementedError
+	exceptions.NotImplementedError: 
+	
+2014-10-13 15:33:57+0800 [zhidao] ERROR: Spider error processing <GET http://zhidao.baidu.com/search?word=Kans/%BA%AB%CA%F8%20%E9%CF%E9%AD%D0%B6%D7%B1%CB%AE>
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 382, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 490, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/spider.py", line 56, in parse
+	    raise NotImplementedError
+	exceptions.NotImplementedError: 
+	
+2014-10-13 15:34:52+0800 [zhidao] ERROR: Spider error processing <GET http://zhidao.baidu.com/search?word=Kans/%BA%AB%CA%F8%20%E9%CF%E9%AD%D0%B6%D7%B1%CB%AE>
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 382, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 490, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/spider.py", line 56, in parse
+	    raise NotImplementedError
+	exceptions.NotImplementedError: 
+	
+2014-10-13 15:35:12+0800 [zhidao] ERROR: Spider error processing <GET http://zhidao.baidu.com/search?word=Kans/%BA%AB%CA%F8%20%E9%CF%E9%AD%D0%B6%D7%B1%CB%AE>
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 382, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 490, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/spider.py", line 56, in parse
+	    raise NotImplementedError
+	exceptions.NotImplementedError: 
+	
