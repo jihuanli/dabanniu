@@ -11,35 +11,35 @@ class BaiduzhidaoItem(Item):
     pass
 
 class ZhidaoQuestion(Item):
-	questionId = Field()
-	url = Field()
-	title = Field()
-	content = Field()
-	supplyContent = Field()
-	category = Field()
-	userName = Field()
-	time = Field()
-	keyword = Field()
-	isFinish = Field()
-	product_id = Field()
+    questionId = Field()
+    url = Field()
+    title = Field()
+    content = Field()
+    supplyContent = Field()
+    category = Field()
+    userName = Field()
+    time = Field()
+    keyword = Field()
+    isFinish = Field()
+    product_id = Field()
 
 class QuestionViewNum(Item):
-	questionId = Field()
+    questionId = Field()
     viewNum = Field()
 
 class ZhidaoAnswer(Item):
-	questionId = Field()
-	answerId = Field()
+    questionId = Field()
+    answerId = Field()
     content = Field()
     likeNum = Field()
     userName = Field()
     time = Field()
-	isBest = Field()
+    isBest = Field()
 
 
 class RelatedQuestion(Item):
-	questionId = Field()
-	relatedId = Field()
+    questionId = Field()
+    relatedId = Field()
     likeNum = Field()
     title = Field()
     time = Field()

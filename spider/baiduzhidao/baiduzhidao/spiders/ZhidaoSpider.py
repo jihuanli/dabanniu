@@ -104,14 +104,14 @@ class ZhidaoSpider(Spider):
         
         guide['supplyContent'] =  first_item(hxs.xpath('.//pre[@class="line mt-10 q-supply-content"]/text()').extract())
         if not guide['supplyContent']:
-            guide['supplyContent'] =  "\n".join(hxs.xpath('.//div[@class="line mt-10 q-supply-content"]/p/text()').extract())
+            guide['supplyContent'] = "\n".join(hxs.xpath('.//div[@class="line mt-10 q-supply-content"]/p/text()').extract())
 
         guide['category'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/span/a[@class="f-aid"]/text()').extract())
         guide['userName'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/a[@class="user-name"]/text()').extract())
         guide['time'] = first_item(hxs.xpath('.//span[@class="grid-r ask-time"]/text()').extract())
         guide['questionId'] = questionId
         guide['url'] = response.url
-        guide['keyword']=response.meta["keyword"]   
+        guide['keyword']=response.meta["keyword"]
         guide['product_id'] = response.meta["product_id"]
         guide['task_id'] = response.meta["task_id"]
         yield guide
@@ -120,6 +120,7 @@ class ZhidaoSpider(Spider):
             qp = QuestionPic()
             qp['questionId'] = questionId
             qp['picUrl'] = picUrl
+
             qp['product_id'] = response.meta["product_id"]
             qp['task_id'] = response.meta["task_id"]
             yield qp
@@ -163,10 +164,10 @@ class ZhidaoSpider(Spider):
             for picUrl in ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
                 bap = AnswerPic()
                 bap['product_id'] = response.meta["product_id"]
-                    bap['task_id'] = response.meta["task_id"]
-                    bap['answerId'] = best['answerId']
-                    bap['picUrl'] = picUrl
-                    yield bap
+                bap['task_id'] = response.meta["task_id"]
+                bap['answerId'] = best['answerId']
+                bap['picUrl'] = picUrl
+                yield bap
     
         ra = hxs.xpath('.//div[@class="wgt-recommend "]')
         if ra:
