@@ -224,20 +224,18 @@ class ZhidaoSpider(Spider):
                 ap['picUrl'] = picUrl
                 yield ap
 
-            for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
-                rq = RelatedQuestion()
-                rq['product_id'] = response.meta["product_id"]
-                rq['task_id'] = response.meta["task_id"]
-                rq  ['task_id'] = response.meta["task_id"]
-                rq['answerId'] = answer['answerId']
-                rq['questionId'] = questionId
-                rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
-                rq['time'] =  first_item(node.xpath('.//span/text()').extract())
-                rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
-                rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
-                if not rq['likeNum']:
-                    rq['likeNum'] = 0
-                yield rq
+        for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
+             rq = RelatedQuestion()
+             rq['product_id'] = response.meta["product_id"]
+             rq['task_id'] = response.meta["task_id"]
+             rq['questionId'] = questionId
+             rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
+             rq['time'] =  first_item(node.xpath('.//span/text()').extract())
+             rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
+             rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
+             if not rq['likeNum']:
+                 rq['likeNum'] = 0
+             yield rq
 
         for node in hxs.xpath('//div[@id="wgt-topic"]/ul/li'):
             rq = RelatedTopic()
