@@ -19,261 +19,257 @@ import urllib
 class ZhidaoSpider(Spider):
     name = "zhidao"
     allowed_domains = ["zhidao.baidu.com"]
-	url_prefix = "http://zhidao.baidu.com/search?word=";
-	# prefix + product_id + task_id + .sql
-	result_filename_prefix = "~/app-root/data/";
-	result_filenname_suffix = self.name + ".sql"
-	#url match pattern
+    url_prefix = "http://zhidao.baidu.com/search?word=";
+    #result filename format: "prefix + product_id + task_id + .sql"
+    result_filename_prefix = "~/app-root/data/";
+    result_filenname_suffix = self.name + ".sql"
+    #url match pattern
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
-	view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
+    view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
     html_tag_pattern = re.compile(r'<[^>]+>')
-	url_prefix = 'zhidao.baidu.com/question/'
     have_fetch_set=set()
-        #construct the request from the start utls
-        def start_requests(self):
-			task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-			task_data = {}
-			task_data["task_id"] = task_json_data[0]['task_id']
-			task_data["product_id"] = task_json_data[0]['product_id']
-			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
-			print start_url
-			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
-			
-			task_json_data = [{'task_id':"111",'product_id':"51371",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-			task_data = {}
-			task_data["task_id"] = task_json_data[0]['task_id']
-			task_data["product_id"] = task_json_data[0]['product_id']
-			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
-			print start_url
-			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
-			
-			task_json_data = [{'task_id':"110",'product_id':"51372",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-			task_data = {}
-			task_data["task_id"] = task_json_data[0]['task_id']
-			task_data["product_id"] = task_json_data[0]['product_id']
-			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
-			print start_url
-			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
+    #construct the request from the start utls
+    def start_requests(self):
+        # task init
+        self.have_fetch_set.clear()
 
-        def parse_list_page(self, response):
-                hxs = Selector(response)
-		meta=response.meta
-		if not meta.get("keyword"):
-			keyword_pattern = re.compile(r'zhidao.baidu.com/search\?word=(.+)')
-			keyword = keyword_pattern.search(response.url).group(1)
-			meta["keyword"]=unicode(urllib.unquote(keyword),"gbk")
-                for url in hxs.xpath('.//a[@class="ti"]/@href').extract():
-			if not (url in oldurl):				
-	                        yield Request(url,meta = meta,callback = self.parse_detail_page,priority = 5)
-			else:
-				log.err(url+"==========================is fetched")
-                for url in hxs.xpath('.//div[@class="pager"]/a/@href').extract():
-                        newUrl="http://zhidao.baidu.com"+url
-			if not (newUrl in self.have_fetch_set):
-				self.have_fetch_set.add(newUrl)
-	                	yield Request(newUrl,meta = meta,callback = self.parse_list_page,priority = 5)
-		
-		
-	def parse_viewnum_page(self, response):
-        	questionId = self.view_num_url_pattern.search(response.url).group(1)
-		viewNumInfo = QuestionViewNum()
-		viewNumInfo['product_id'] = response.meta["product_id"]
-		viewNumInfo['task_id'] = response.meta["task_id"]
-		viewNumInfo['questionId'] = questionId
-		viewNumInfo['viewNum'] = response.body
-		yield viewNumInfo
+        task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+        task_data = {}
+        task_data["task_id"] = task_json_data[0]['task_id']
+        task_data["product_id"] = task_json_data[0]['product_id']
+        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        print start_url
+        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
-	def parse_detail_page(self,response):
-		hxs = Selector(response)
-                questionId = self.detail_page_pattern.search(response.url).group(1)
-                guide = ZhidaoQuestion()
-                title = first_item(hxs.xpath('.//span[@class="ask-title "]/text()').extract())
-                if not title:
-                        return
-                guide['title'] =  title.strip()
-		guide['isFinish'] = 1
-		# hack----zhidao  wordreplace
-		wordReplace = first_item(hxs.xpath('.//pre[@class="line mt-10 q-content"]/img').extract())
-		if wordReplace:
-			guide['isFinish'] = 0
-		wordReplace = first_item(hxs.xpath('.//div[@class="line mt-10 q-content"]/p/img').extract())
-		if wordReplace:
-			guide['isFinish'] = 0
+        task_json_data = [{'task_id':"111",'product_id':"51371",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+        task_data = {}
+        task_data["task_id"] = task_json_data[0]['task_id']
+        task_data["product_id"] = task_json_data[0]['product_id']
+        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        print start_url
+        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
-		guide['content'] =  "\n".join(hxs.xpath('.//pre[@class="line mt-10 q-content"]/text()').extract())
+        task_json_data = [{'task_id':"110",'product_id':"51372",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+        task_data = {}
+        task_data["task_id"] = task_json_data[0]['task_id']
+        task_data["product_id"] = task_json_data[0]['product_id']
+        task_data = task_json_data["keyword"]
+        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        print start_url
+        yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
-		if not guide['content']:
-                        guide['content'] =  "\n".join(hxs.xpath('.//div[@class="line mt-10 q-content"]/p/text()').extract())
-		
-		guide['supplyContent'] =  first_item(hxs.xpath('.//pre[@class="line mt-10 q-supply-content"]/text()').extract())
-		if not guide['supplyContent']:
-                        guide['supplyContent'] =  "\n".join(hxs.xpath('.//div[@class="line mt-10 q-supply-content"]/p/text()').extract())
-                
-		guide['category'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/span/a[@class="f-aid"]/text()').extract())
-                guide['userName'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/a[@class="user-name"]/text()').extract())
-                guide['time'] = first_item(hxs.xpath('.//span[@class="grid-r ask-time"]/text()').extract())
-                guide['questionId'] = questionId
-                guide['url'] = response.url
-		guide['keyword']=response.meta["keyword"]	
-		guide['product_id'] = response.meta["product_id"]
-		guide['task_id'] = response.meta["task_id"]
-                yield guide
-		
-		for picUrl in hxs.xpath('//div[@id="wgt-ask"]/div/p/a/@href').extract():
-			qp = QuestionPic()
-			qp['questionId'] = questionId
-			qp['picUrl'] = picUrl
-			qp['product_id'] = response.meta["product_id"]
-			qp['task_id'] = response.meta["task_id"]
-			yield qp
-		
-		if guide['isFinish']==0:
-                        log.err("not finish======> %s" % response.url)
-			return
-		newUrl="http://cp.zhidao.baidu.com/v.php?q="+questionId
-		yield Request(newUrl,callback = self.parse_viewnum_page,priority = 8)
+    def parse_list_page(self, response):
+        hxs = Selector(response)
+        for url in hxs.xpath('.//a[@class="ti"]/@href').extract():
+            if not (url in oldurl):
+                yield Request(url,meta = response.meta,callback = self.parse_detail_page,priority = 5)
+            else:
+                log.err(url+"==========================is fetched")
+        for url in hxs.xpath('.//div[@class="pager"]/a/@href').extract():
+            newUrl="http://zhidao.baidu.com" + url
+            if not (newUrl in self.have_fetch_set):
+                self.have_fetch_set.add(newUrl)
+                yield Request(newUrl,meta = response.meta,callback = self.parse_list_page,priority = 5)
 
-		ba = hxs.xpath('.//div[@class="wgt-best "]')
-		if ba:
-			ba=ba[0]
-			best=ZhidaoAnswer()
-			best['questionId'] = questionId
-			best['isBest'] = 1
-			best['product_id'] = response.meta["product_id"]
-			best['task_id'] = response.meta["task_id"]
+    def parse_viewnum_page(self, response):
+        questionId = self.view_num_url_pattern.search(response.url).group(1)
+        viewNumInfo = QuestionViewNum()
+        viewNumInfo['product_id'] = response.meta["product_id"]
+        viewNumInfo['task_id'] = response.meta["task_id"]
+        viewNumInfo['questionId'] = questionId
+        viewNumInfo['viewNum'] = response.body
+        yield viewNumInfo
 
-			wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
-	                if wordReplace:
-        	                log.err("================================================")
-                	        log.err(response.url)
-                        	return
-	                wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/img').extract())
-        	        if wordReplace:
-                	        log.err("================================================")
-                        	log.err(response.url)
-	                        return	
-			best['content'] = "\n".join(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/text()').extract())
-			if not best['content']:
-                                best['content'] =  "\n".join(ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/text()').extract())
+    def parse_detail_page(self,response):
+        hxs = Selector(response)
+        questionId = self.detail_page_pattern.search(response.url).group(1)
+        guide = ZhidaoQuestion()
+        title = first_item(hxs.xpath('.//span[@class="ask-title "]/text()').extract())
+        if not title:
+            return
+        guide['title'] =  title.strip()
+        guide['isFinish'] = 1
+        # hack----zhidao  wordreplace
+        wordReplace = first_item(hxs.xpath('.//pre[@class="line mt-10 q-content"]/img').extract())
+        if wordReplace:
+            guide['isFinish'] = 0
+        wordReplace = first_item(hxs.xpath('.//div[@class="line mt-10 q-content"]/p/img').extract())
+        if wordReplace:
+            guide['isFinish'] = 0
 
-			best['userName'] =  first_item(ba.xpath('..//div[@class="bd answer"]/div/div/p/a[@class="user-name"]/text()').extract())
-                        if not best['userName']:
-                                best['userName'] =  u"热心网友"
-                        best['time'] =  ba.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
-                        best['likeNum'] =  first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
-                        best['answerId'] = first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
-			yield best
-			for picUrl in ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
-                                bap = AnswerPic()
-								bap['product_id'] = response.meta["product_id"]
-								bap['task_id'] = response.meta["task_id"]
-                                bap['answerId'] = best['answerId']
-                                bap['picUrl'] = picUrl
-                                yield bap
-	
-		ra = hxs.xpath('.//div[@class="wgt-recommend "]')
-                if ra:
-                        ra=ra[0]
-                        best=ZhidaoAnswer()
-                        best['questionId'] = questionId
-                        best['isBest'] = 2
-						best['product_id'] = response.meta["product_id"]
-						best['task_id'] = response.meta["task_id"]
+        guide['content'] = "\n".join(hxs.xpath('.//pre[@class="line mt-10 q-content"]/text()').extract())
 
-                        wordReplace = first_item(ra.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
-                        if wordReplace:
-                                log.err("================================================")
-                                log.err(response.url)
-                                return
-                        wordReplace = first_item(ra.xpath('.//div[@class="bd answer"]/div/div[@class="recommend-text mb-10"]/p/img').extract())
-                        if wordReplace:
-                                log.err("================================================")
-                                log.err(response.url)
-                                return
-                        best['content'] = "\n".join(ra.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/text()').extract())
-                        if not best['content']:
-                                best['content'] =  "\n".join(ra.xpath('.//div[@class="bd answer"]/div/div[@class="recommend-text mb-10"]/p/text()').extract())
+        if not guide['content']:
+            guide['content'] =  "\n".join(hxs.xpath('.//div[@class="line mt-10 q-content"]/p/text()').extract())
+        
+        guide['supplyContent'] =  first_item(hxs.xpath('.//pre[@class="line mt-10 q-supply-content"]/text()').extract())
+        if not guide['supplyContent']:
+            guide['supplyContent'] =  "\n".join(hxs.xpath('.//div[@class="line mt-10 q-supply-content"]/p/text()').extract())
 
-                        best['userName'] =  first_item(ra.xpath('..//div[@class="bd answer"]/div/div/p/a[@class="user-name"]/text()').extract())
-                        if not best['userName']:
-                                best['userName'] =  u"热心网友"
-                        best['time'] =  ra.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
-                        best['likeNum'] =  first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
-                        best['answerId'] = first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
-                        yield best
-                        for picUrl in ra.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
-                                bap = AnswerPic()
-								bap['product_id'] = response.meta["product_id"]
-								bap['task_id'] = response.meta["task_id"]
-                                bap['answerId'] = best['answerId']
-                                bap['picUrl'] = picUrl
-                                yield bap
-	
-		for node in hxs.xpath('//div[@id="wgt-answers"]/div/div[@class="line"]/div[contains(@class,"content")]'):
-			answer = ZhidaoAnswer()
-			answer['product_id'] = response.meta["product_id"]
-			answer['task_id'] = response.meta["task_id"]
-			answer['questionId'] = questionId
+        guide['category'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/span/a[@class="f-aid"]/text()').extract())
+        guide['userName'] =  first_item(hxs.xpath('.//div[@id="ask-info"]/a[@class="user-name"]/text()').extract())
+        guide['time'] = first_item(hxs.xpath('.//span[@class="grid-r ask-time"]/text()').extract())
+        guide['questionId'] = questionId
+        guide['url'] = response.url
+        guide['keyword']=response.meta["keyword"]   
+        guide['product_id'] = response.meta["product_id"]
+        guide['task_id'] = response.meta["task_id"]
+        yield guide
 
-                        wordReplace = first_item(node.xpath('.//pre/img').extract())
-                        if wordReplace:
-                                log.err("================================================")
-                                log.err(response.url)
-                                return
-                        wordReplace = first_item(node.xpath('.//div[@class="answer-text mb-10"]/p/img').extract())
-                        if wordReplace:
-                                log.err("================================================")
-                                log.err(response.url)
-                                return
-			answer['content']= "\n".join(node.xpath('.//pre/text()').extract())
-			if not answer['content']:
-	                        answer['content'] =  "\n".join(node.xpath('.//div[@class="answer-text mb-10"]/p/text()').extract())
-			answer['userName'] =  first_item(node.xpath('..//div/a[@class="user-name"]/text()').extract())
-			if not answer['userName']:
-				answer['userName'] =  u"热心网友"
-			answer['time'] =  node.xpath('..//div/span[@class="grid-r pos-time"]/text()').extract()[1].strip()
-			answer['likeNum'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@data-evaluate').extract())
-			answer['answerId'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@id').re('evaluate-([0-9]+)'))
-			answer['isBest'] = 0 
-			yield answer
-			for picUrl in node.xpath('.//div[@class="answer-text mb-10"]/p/a/@href').extract():
-	                        ap = AnswerPic()
-							ap['product_id'] = response.meta["product_id"]
-							ap['task_id'] = response.meta["task_id"]
-        	                ap['answerId'] = answer['answerId']
-                	        ap['picUrl'] = picUrl
-                        	yield ap	
-		
-		for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
-                        rq = RelatedQuestion()
-						rq['product_id'] = response.meta["product_id"]
-						rq['task_id'] = response.meta["task_id"]
-						rq  ['task_id'] = response.meta["task_id"]
-        	            rq['answerId'] = answer['answerId']
-                        rq['questionId'] = questionId
-			rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
-                        rq['time'] =  first_item(node.xpath('.//span/text()').extract())
-                        rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
-			rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
-			if not rq['likeNum']:
-				rq['likeNum'] = 0
-                        yield rq
+        for picUrl in hxs.xpath('//div[@id="wgt-ask"]/div/p/a/@href').extract():
+            qp = QuestionPic()
+            qp['questionId'] = questionId
+            qp['picUrl'] = picUrl
+            qp['product_id'] = response.meta["product_id"]
+            qp['task_id'] = response.meta["task_id"]
+            yield qp
 
-		for node in hxs.xpath('//div[@id="wgt-topic"]/ul/li'):
-                        rq = RelatedTopic()
-						rq['product_id'] = response.meta["product_id"]
-						rq['task_id'] = response.meta["task_id"]
-                        rq['questionId'] = questionId
-                        rq['relatedId'] = first_item(node.xpath('.//a/@href').re('([0-9]+).html'))
-                        rq['time'] =  first_item(node.xpath('.//span[@class="grid-r f-aid"]/text()').extract())
-                        rq['title'] =  first_item(node.xpath('.//a/text()').extract()).strip()
-                        rq['likeNum'] = first_item(node.xpath('.//span[@class="ml-5 f-red"]/text()').extract())
-                        if not rq['likeNum']:
-                                rq['likeNum'] = 0
-                        yield rq
+        if guide['isFinish']==0:
+            log.err("not finish======> %s" % response.url)
+            return
+        newUrl="http://cp.zhidao.baidu.com/v.php?q=" + questionId
+        yield Request(newUrl,callback = self.parse_viewnum_page,priority = 8)
+
+        ba = hxs.xpath('.//div[@class="wgt-best "]')
+        if ba:
+            ba=ba[0]
+            best=ZhidaoAnswer()
+            best['questionId'] = questionId
+            best['isBest'] = 1
+            best['product_id'] = response.meta["product_id"]
+            best['task_id'] = response.meta["task_id"]
+
+            wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
+            if wordReplace:
+                log.err("================================================")
+                log.err(response.url)
+                return
+            wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/img').extract())
+            if wordReplace:
+                log.err("================================================")
+                log.err(response.url)
+                return
+            best['content'] = "\n".join(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/text()').extract())
+            if not best['content']:
+                best['content'] =  "\n".join(ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/text()').extract())
+
+            best['userName'] =  first_item(ba.xpath('..//div[@class="bd answer"]/div/div/p/a[@class="user-name"]/text()').extract())
+            if not best['userName']:
+                best['userName'] =  u"热心网友"
+            best['time'] =  ba.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
+            best['likeNum'] =  first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
+            best['answerId'] = first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
+            yield best
+            for picUrl in ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
+                bap = AnswerPic()
+                bap['product_id'] = response.meta["product_id"]
+                    bap['task_id'] = response.meta["task_id"]
+                    bap['answerId'] = best['answerId']
+                    bap['picUrl'] = picUrl
+                    yield bap
+    
+        ra = hxs.xpath('.//div[@class="wgt-recommend "]')
+        if ra:
+            ra=ra[0]
+            best=ZhidaoAnswer()
+            best['questionId'] = questionId
+            best['isBest'] = 2
+            best['product_id'] = response.meta["product_id"]
+            best['task_id'] = response.meta["task_id"]
+
+            wordReplace = first_item(ra.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
+            if wordReplace:
+                og.err("================================================")
+                log.err(response.url)
+                eturn
+            wordReplace = first_item(ra.xpath('.//div[@class="bd answer"]/div/div[@class="recommend-text mb-10"]/p/img').extract())
+            if wordReplace:
+                log.err("================================================")
+                log.err(response.url)
+                return
+            best['content'] = "\n".join(ra.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/text()').extract())
+            if not best['content']:
+                best['content'] =  "\n".join(ra.xpath('.//div[@class="bd answer"]/div/div[@class="recommend-text mb-10"]/p/text()').extract())
+
+            best['userName'] =  first_item(ra.xpath('..//div[@class="bd answer"]/div/div/p/a[@class="user-name"]/text()').extract())
+            if not best['userName']:
+                best['userName'] =  u"热心网友"
+            best['time'] =  ra.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
+            best['likeNum'] =  first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
+            best['answerId'] = first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
+            yield best
+            for picUrl in ra.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
+                bap = AnswerPic()
+                bap['product_id'] = response.meta["product_id"]
+                bap['task_id'] = response.meta["task_id"]
+                bap['answerId'] = best['answerId']
+                bap['picUrl'] = picUrl
+                yield bap
+    
+        for node in hxs.xpath('//div[@id="wgt-answers"]/div/div[@class="line"]/div[contains(@class,"content")]'):
+            answer = ZhidaoAnswer()
+            answer['product_id'] = response.meta["product_id"]
+            answer['task_id'] = response.meta["task_id"]
+            answer['questionId'] = questionId
+            wordReplace = first_item(node.xpath('.//pre/img').extract())
+            if wordReplace:
+                log.err("================================================")
+                log.err(response.url)
+                return
+            wordReplace = first_item(node.xpath('.//div[@class="answer-text mb-10"]/p/img').extract())
+            if wordReplace:
+                log.err("================================================")
+                log.err(response.url)
+                return
+            answer['content']= "\n".join(node.xpath('.//pre/text()').extract())
+            if not answer['content']:
+                answer['content'] =  "\n".join(node.xpath('.//div[@class="answer-text mb-10"]/p/text()').extract())
+            answer['userName'] =  first_item(node.xpath('..//div/a[@class="user-name"]/text()').extract())
+            if not answer['userName']:
+                answer['userName'] =  u"热心网友"
+            answer['time'] =  node.xpath('..//div/span[@class="grid-r pos-time"]/text()').extract()[1].strip()
+            answer['likeNum'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@data-evaluate').extract())
+            answer['answerId'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@id').re('evaluate-([0-9]+)'))
+            answer['isBest'] = 0 
+            yield answer
+            for picUrl in node.xpath('.//div[@class="answer-text mb-10"]/p/a/@href').extract():
+                ap = AnswerPic()
+                ap['product_id'] = response.meta["product_id"]
+                ap['task_id'] = response.meta["task_id"]
+                ap['answerId'] = answer['answerId']
+                ap['picUrl'] = picUrl
+                yield ap
+
+        for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
+            rq = RelatedQuestion()
+            rq['product_id'] = response.meta["product_id"]
+            rq['task_id'] = response.meta["task_id"]
+            rq  ['task_id'] = response.meta["task_id"]
+            rq['answerId'] = answer['answerId']
+            rq['questionId'] = questionId
+            rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
+            rq['time'] =  first_item(node.xpath('.//span/text()').extract())
+            rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
+            rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
+            if not rq['likeNum']:
+                rq['likeNum'] = 0
+            yield rq
+
+        for node in hxs.xpath('//div[@id="wgt-topic"]/ul/li'):
+            rq = RelatedTopic()
+            rq['product_id'] = response.meta["product_id"]
+            rq['task_id'] = response.meta["task_id"]
+            rq['questionId'] = questionId
+            rq['relatedId'] = first_item(node.xpath('.//a/@href').re('([0-9]+).html'))
+            rq['time'] =  first_item(node.xpath('.//span[@class="grid-r f-aid"]/text()').extract())
+            rq['title'] =  first_item(node.xpath('.//a/text()').extract()).strip()
+            rq['likeNum'] = first_item(node.xpath('.//span[@class="ml-5 f-red"]/text()').extract())
+            if not rq['likeNum']:
+                rq['likeNum'] = 0
+            yield rq
         def parse(self, response):
-		meta=response.meta
-		if not meta.get("product_id"):
-			print "Error... missing product_id"
-		print meta.get("product_id")
-                return self.parse_list_page(response)
+            meta=response.meta
+            if not meta.get("product_id"):
+                print "Error... missing product_id"
+            print meta.get("product_id")
+            return self.parse_list_page(response)
