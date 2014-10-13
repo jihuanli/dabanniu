@@ -9,22 +9,8 @@ from twisted.enterprise import adbapi
 from scrapy import log
 from baiduzhidao.items import ZhidaoQuestion,ZhidaoAnswer,RelatedQuestion,QuestionPic,AnswerPic, QuestionViewNum,RelatedTopic
 
-timestamp = time.strftime('%Y-%m-%d',time.localtime(time.time()))
-result_file_name = "/var/lib/openshift/543802435973cafa9500062f/app-root/data/baidu_zhidao_sql_" + timestamp + ".sql"
-result_file = open(result_file_name, 'a')
-
-
 class BaiduzhidaoPipeline(object):
 	def __init__(self): 
-		#self.dbpool = adbapi.ConnectionPool('MySQLdb', 
-	    #				db = 'zhidao2', 
-		#			user = 'root', 
-		#			passwd = 'applen_(0)',
-		#	host='112.124.53.109', 
-		#	cursorclass = MySQLdb.cursors.DictCursor, 
-		#	charset = 'utf8', 
-		#			use_unicode = True 
-		#) 
 		return	
 	def process_item(self, item, spider):
 		result_sql = ""
@@ -43,10 +29,16 @@ class BaiduzhidaoPipeline(object):
 			result_sql = self._answer_pic_insert(item)
 		elif isinstance(item,QuestionViewNum):
 			result_sql = self._question_view_update(item)
+		
+		#dump to files
+		timestamp = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+		result_file_name = spider.result_filename_prefix + item.get('product_id') + "_" + item.get('task_id') + "_" + timestamp + "_" + spider.result_filenname_suffix
+		print result_file_name
+		result_file = open(result_file_name, 'a')
 		result_sql = result_sql.encode("utf-8")
-		print result_sql
 		result_file.write(result_sql)
 		result_file.flush()
+		result_file.close()
 		return item 
 
 

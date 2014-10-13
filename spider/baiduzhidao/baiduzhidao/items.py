@@ -25,37 +25,37 @@ class ZhidaoQuestion(Item):
 
 class QuestionViewNum(Item):
 	questionId = Field()
-        viewNum = Field()
+    viewNum = Field()
 
 class ZhidaoAnswer(Item):
 	questionId = Field()
 	answerId = Field()
-        content = Field()
-        likeNum = Field()
-        userName = Field()
-        time = Field()
+    content = Field()
+    likeNum = Field()
+    userName = Field()
+    time = Field()
 	isBest = Field()
 
 
 class RelatedQuestion(Item):
 	questionId = Field()
 	relatedId = Field()
-        likeNum = Field()
-        title = Field()
-        time = Field()
+    likeNum = Field()
+    title = Field()
+    time = Field()
 
 class RelatedTopic(Item):
-        questionId = Field()
-        relatedId = Field()
-        likeNum = Field()
-        title = Field()
-        time = Field()
+    questionId = Field()
+    relatedId = Field()
+    likeNum = Field()
+    title = Field()
+    time = Field()
 
 class QuestionPic(Item):
-        questionId = Field()
-        picUrl = Field()
+    questionId = Field()
+    picUrl = Field()
 
 class AnswerPic(Item):
-        answerId = Field()
-        picUrl = Field()
+    answerId = Field()
+    picUrl = Field()
 

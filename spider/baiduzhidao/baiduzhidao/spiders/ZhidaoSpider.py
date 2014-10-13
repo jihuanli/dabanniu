@@ -10,28 +10,50 @@ from .spider_common import *
 from .oldUrl import *
 import json as json_mod
 from scrapy import signals,log
+from urllib import urlencode
 import urllib
 
 #reload(sys) 
 #sys.setdefaultencoding("utf-8")
 
 class ZhidaoSpider(Spider):
-        name = "zhidao"
-        allowed_domains = ["zhidao.baidu.com"]
-
+    name = "zhidao"
+    allowed_domains = ["zhidao.baidu.com"]
+	url_prefix = "http://zhidao.baidu.com/search?word=";
+	# prefix + product_id + task_id + .sql
+	result_filename_prefix = "~/app-root/data/";
+	result_filenname_suffix = self.name + ".sql"
 	#url match pattern
-        detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
+    detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
 	view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
-        html_tag_pattern = re.compile(r'<[^>]+>')
+    html_tag_pattern = re.compile(r'<[^>]+>')
 	url_prefix = 'zhidao.baidu.com/question/'
-        have_fetch_set=set()
+    have_fetch_set=set()
         #construct the request from the start utls
         def start_requests(self):
-                for url in start_urls:
-                        #yield self.make_requests_from_url(url)
+			task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
 			task_data = {}
-			task_data["product_id"] = "5"
-			yield Request(url, meta = task_data, callback = self.parse, priority = 5)
+			task_data["task_id"] = task_json_data[0]['task_id']
+			task_data["product_id"] = task_json_data[0]['product_id']
+			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+			print start_url
+			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
+			
+			task_json_data = [{'task_id':"111",'product_id':"51371",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+			task_data = {}
+			task_data["task_id"] = task_json_data[0]['task_id']
+			task_data["product_id"] = task_json_data[0]['product_id']
+			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+			print start_url
+			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
+			
+			task_json_data = [{'task_id':"110",'product_id':"51372",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+			task_data = {}
+			task_data["task_id"] = task_json_data[0]['task_id']
+			task_data["product_id"] = task_json_data[0]['product_id']
+			start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+			print start_url
+			yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
         def parse_list_page(self, response):
                 hxs = Selector(response)
@@ -55,6 +77,8 @@ class ZhidaoSpider(Spider):
 	def parse_viewnum_page(self, response):
         	questionId = self.view_num_url_pattern.search(response.url).group(1)
 		viewNumInfo = QuestionViewNum()
+		viewNumInfo['product_id'] = response.meta["product_id"]
+		viewNumInfo['task_id'] = response.meta["task_id"]
 		viewNumInfo['questionId'] = questionId
 		viewNumInfo['viewNum'] = response.body
 		yield viewNumInfo
@@ -91,13 +115,16 @@ class ZhidaoSpider(Spider):
                 guide['questionId'] = questionId
                 guide['url'] = response.url
 		guide['keyword']=response.meta["keyword"]	
-		guide['product_id']=response.meta["product_id"]
+		guide['product_id'] = response.meta["product_id"]
+		guide['task_id'] = response.meta["task_id"]
                 yield guide
 		
 		for picUrl in hxs.xpath('//div[@id="wgt-ask"]/div/p/a/@href').extract():
 			qp = QuestionPic()
 			qp['questionId'] = questionId
 			qp['picUrl'] = picUrl
+			qp['product_id'] = response.meta["product_id"]
+			qp['task_id'] = response.meta["task_id"]
 			yield qp
 		
 		if guide['isFinish']==0:
@@ -112,6 +139,8 @@ class ZhidaoSpider(Spider):
 			best=ZhidaoAnswer()
 			best['questionId'] = questionId
 			best['isBest'] = 1
+			best['product_id'] = response.meta["product_id"]
+			best['task_id'] = response.meta["task_id"]
 
 			wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
 	                if wordReplace:
@@ -136,6 +165,8 @@ class ZhidaoSpider(Spider):
 			yield best
 			for picUrl in ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
                                 bap = AnswerPic()
+								bap['product_id'] = response.meta["product_id"]
+								bap['task_id'] = response.meta["task_id"]
                                 bap['answerId'] = best['answerId']
                                 bap['picUrl'] = picUrl
                                 yield bap
@@ -146,6 +177,8 @@ class ZhidaoSpider(Spider):
                         best=ZhidaoAnswer()
                         best['questionId'] = questionId
                         best['isBest'] = 2
+						best['product_id'] = response.meta["product_id"]
+						best['task_id'] = response.meta["task_id"]
 
                         wordReplace = first_item(ra.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
                         if wordReplace:
@@ -170,12 +203,16 @@ class ZhidaoSpider(Spider):
                         yield best
                         for picUrl in ra.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
                                 bap = AnswerPic()
+								bap['product_id'] = response.meta["product_id"]
+								bap['task_id'] = response.meta["task_id"]
                                 bap['answerId'] = best['answerId']
                                 bap['picUrl'] = picUrl
                                 yield bap
 	
 		for node in hxs.xpath('//div[@id="wgt-answers"]/div/div[@class="line"]/div[contains(@class,"content")]'):
 			answer = ZhidaoAnswer()
+			answer['product_id'] = response.meta["product_id"]
+			answer['task_id'] = response.meta["task_id"]
 			answer['questionId'] = questionId
 
                         wordReplace = first_item(node.xpath('.//pre/img').extract())
@@ -201,12 +238,18 @@ class ZhidaoSpider(Spider):
 			yield answer
 			for picUrl in node.xpath('.//div[@class="answer-text mb-10"]/p/a/@href').extract():
 	                        ap = AnswerPic()
+							ap['product_id'] = response.meta["product_id"]
+							ap['task_id'] = response.meta["task_id"]
         	                ap['answerId'] = answer['answerId']
                 	        ap['picUrl'] = picUrl
                         	yield ap	
 		
 		for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
                         rq = RelatedQuestion()
+						rq['product_id'] = response.meta["product_id"]
+						rq['task_id'] = response.meta["task_id"]
+						rq  ['task_id'] = response.meta["task_id"]
+        	            rq['answerId'] = answer['answerId']
                         rq['questionId'] = questionId
 			rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
                         rq['time'] =  first_item(node.xpath('.//span/text()').extract())
@@ -218,6 +261,8 @@ class ZhidaoSpider(Spider):
 
 		for node in hxs.xpath('//div[@id="wgt-topic"]/ul/li'):
                         rq = RelatedTopic()
+						rq['product_id'] = response.meta["product_id"]
+						rq['task_id'] = response.meta["task_id"]
                         rq['questionId'] = questionId
                         rq['relatedId'] = first_item(node.xpath('.//a/@href').re('([0-9]+).html'))
                         rq['time'] =  first_item(node.xpath('.//span[@class="grid-r f-aid"]/text()').extract())
