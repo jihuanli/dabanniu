@@ -10,19 +10,19 @@ from .spider_common import *
 from .oldUrl import *
 import json as json_mod
 from scrapy import signals,log
-from urllib import urlencode
+from urllib import quote
 import urllib
 
 #reload(sys) 
 #sys.setdefaultencoding("utf-8")
 
 class ZhidaoSpider(Spider):
-    name = "zhidao"
+    spider_name = "zhidao"
     allowed_domains = ["zhidao.baidu.com"]
-    url_prefix = "http://zhidao.baidu.com/search?word=";
+    zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
     #result filename format: "prefix + product_id + task_id + .sql"
     result_filename_prefix = "~/app-root/data/";
-    result_filenname_suffix = self.name + ".sql"
+    result_filenname_suffix = spider_name + ".sql"
     #url match pattern
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
     view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
@@ -37,7 +37,8 @@ class ZhidaoSpider(Spider):
         task_data = {}
         task_data["task_id"] = task_json_data[0]['task_id']
         task_data["product_id"] = task_json_data[0]['product_id']
-        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        task_data["keyword"] = task_json_data[0]["keyword"]
+        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
         print start_url
         yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
@@ -45,7 +46,8 @@ class ZhidaoSpider(Spider):
         task_data = {}
         task_data["task_id"] = task_json_data[0]['task_id']
         task_data["product_id"] = task_json_data[0]['product_id']
-        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        task_data["keyword"] = task_json_data[0]["keyword"]
+        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
         print start_url
         yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
@@ -53,8 +55,8 @@ class ZhidaoSpider(Spider):
         task_data = {}
         task_data["task_id"] = task_json_data[0]['task_id']
         task_data["product_id"] = task_json_data[0]['product_id']
-        task_data = task_json_data["keyword"]
-        start_url = url_prefix + urlencode(task_json_data[0]['keyword'])
+        task_data["keyword"] = task_json_data[0]["keyword"]
+        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
         print start_url
         yield Request(start_url, meta = task_data, callback = self.parse, priority = 5)
 
