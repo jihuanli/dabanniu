@@ -45,7 +45,7 @@ class BaiduzhidaoPipeline(object):
 
     def _question_insert(self, item):
         if item.get('questionId'):
-            return "insert into product_question(product_id,question_id) values (%s, %s);\n insert into question(questionId, url, title, content, supplyContent, category, userName, time,keyword, isFinish) values(%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s);\n" % (item['product_id'],item['questionId'],item['questionId'],item['url'],item['title'],item['content'],item['supplyContent'],item['category'],item['userName'],item['time'],item['keyword'],item['isFinish'])
+            return "insert into product_question(product_id,question_id) values (%s, %s);\ninsert into question(questionId, url, title, content, supplyContent, category, userName, time,keyword, isFinish) values(%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s);\n" % (item['product_id'],item['questionId'],item['questionId'],item['url'],item['title'],item['content'],item['supplyContent'],item['category'],item['userName'],item['time'],item['keyword'],item['isFinish'])
 
     def _answer_insert(self, item):
         if item.get('questionId'):

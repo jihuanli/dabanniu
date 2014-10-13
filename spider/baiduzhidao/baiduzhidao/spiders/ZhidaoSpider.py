@@ -1,5 +1,5 @@
 #coding=utf-8
-import sys,re
+import sys,re,os
 from scrapy.selector import Selector
 from scrapy.spider import Spider
 from scrapy.http import Response, Request
@@ -21,7 +21,7 @@ class ZhidaoSpider(Spider):
     allowed_domains = ["zhidao.baidu.com"]
     zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
     #result filename format: "prefix + product_id + task_id + .sql"
-    result_filename_prefix = "~/app-root/data/";
+    result_filename_prefix = os.path.expanduser("~/app-root/data/");
     result_filenname_suffix = name + ".sql"
     #url match pattern
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
@@ -37,7 +37,7 @@ class ZhidaoSpider(Spider):
         meta = {}
         meta["task_id"] = task_json_data[0]['task_id']
         meta["product_id"] = task_json_data[0]['product_id']
-        meta["keyword"] = task_json_data[0]["keyword"]
+        meta["keyword"] = task_json_data[0]["keyword"].decode("utf-8")
         start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
         yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
