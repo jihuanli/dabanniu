@@ -39,7 +39,6 @@ class ZhidaoSpider(Spider):
         meta["product_id"] = task_json_data[0]['product_id']
         meta["keyword"] = task_json_data[0]["keyword"]
         start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
-        print start_url
         yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
     def parse_list_page(self, response):
@@ -253,10 +252,7 @@ class ZhidaoSpider(Spider):
                 rq['likeNum'] = 0
             yield rq
     def parse(self, response):
-        print 1
         meta=response.meta
-        print 2 
         if not meta.get("product_id"):
-            print "Error... missing product_id"
-        print meta.get("product_id")
+            log.error("===================Error... missing product_id")
         return self.parse_list_page(response)
