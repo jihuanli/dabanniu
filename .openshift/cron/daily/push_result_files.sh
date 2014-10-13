@@ -10,8 +10,9 @@ SPIDER_NAME=`cat spider.conf | grep SPIDER_NAME | awk -F'=' '{print $2}'`
 #拷贝文件到日期目录下
 mkdir $date
 find $OPENSHIFT_DATA_DIR -mmin +$minutes_ago -name "*.sql" -type f | xargs -i mv {} $date 
+cd $date
 #压缩
-result_tar_filename="$date""_"".tar.gz"
+result_tar_filename="$date""_""$SPIDER_NAME.tar.gz"
 tar -zcvf $result_tar_filename . 
 
 #scp
