@@ -44,20 +44,26 @@ class ZhidaoSpider(Spider):
     #construct the request from the start utls
     def start_requests(self):
         # task init
-        self.have_fetch_set.clear()
-        #task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
-        conn=httplib.HTTPConnection('182.92.67.121',8888)
-        dest_url = str("/gettask?spider_name=") + str(self.spider_name)
-        conn.request('GET', dest_url)
-        task_data = conn.getresponse().read()
-        conn.close()
-        task_json_data = json.loads(task_data)
-        meta = {}
-        meta["task_id"] = task_json_data[0]['taskId']
-        meta["product_id"] = task_json_data[0]['productId']
-        meta["keyword"] = task_json_data[0]["keyword"]
-        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].encode("gbk"))
-        yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
+        while True:
+            self.have_fetch_set.clear()
+            conn=httplib.HTTPConnection('182.92.67.121',8888)
+            dest_url = str("/gettask?spider_name=") + str(self.spider_name)
+            conn.request('GET', dest_url)
+            task_data = conn.getresponse().read()
+            if task_data.find("taskId") == False:
+                continue
+            if ~task_data.find("productId") == False:
+                continue
+            if ~task_data.find("keyword") == False:
+                continue
+            conn.close()
+            task_json_data = json.loads(task_data)
+            meta = {}
+            meta["task_id"] = task_json_data[0]['taskId']
+            meta["product_id"] = task_json_data[0]['productId']
+            meta["keyword"] = task_json_data[0]["keyword"]
+            start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].encode("gbk"))
+            yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
     def parse_list_page(self, response):
         hxs = Selector(response)
