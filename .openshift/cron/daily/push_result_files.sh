@@ -13,5 +13,3 @@ cd $date
 #压缩
 result_tar_filename="$date.tar.gz"
 tar -zcvf $result_tar_filename . 
-
-#scp

@@ -12,6 +12,8 @@ import json as json_mod
 from scrapy import signals,log
 from urllib import quote
 import urllib
+import json
+import httplib 
 
 #reload(sys) 
 #sys.setdefaultencoding("utf-8")
@@ -27,18 +29,34 @@ class ZhidaoSpider(Spider):
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
     view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
     html_tag_pattern = re.compile(r'<[^>]+>')
-    have_fetch_set=set()
+    have_fetch_set = set()
+    
+    # spider conf
+    spider_conf_filename = result_filename_prefix + "spider.conf"
+    spider_name = "unknown_spider"
+    if os.path.isfile(spider_conf_filename):
+        spider_file = open(spider_conf_filename)
+        t_spider_name = spider_file.readline()
+        if t_spider_name:
+            spider_name = t_spider_name 
+        spider_file.close();
+
     #construct the request from the start utls
     def start_requests(self):
         # task init
         self.have_fetch_set.clear()
-
-        task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+        #task_json_data = [{'task_id':"110",'product_id':"51370",'keyword':"Kans/韩束 橄榄卸妆水"}]  #list对象
+        conn=httplib.HTTPConnection('182.92.67.121',8888)
+        dest_url = str("/gettask?spider_name=") + str(self.spider_name)
+        conn.request('GET', dest_url)
+        task_data = conn.getresponse().read()
+        conn.close()
+        task_json_data = json.loads(task_data)
         meta = {}
-        meta["task_id"] = task_json_data[0]['task_id']
-        meta["product_id"] = task_json_data[0]['product_id']
-        meta["keyword"] = task_json_data[0]["keyword"].decode("utf-8")
-        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].decode("utf-8").encode("gbk"))
+        meta["task_id"] = task_json_data[0]['taskId']
+        meta["product_id"] = task_json_data[0]['productId']
+        meta["keyword"] = task_json_data[0]["keyword"]
+        start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].encode("gbk"))
         yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
     def parse_list_page(self, response):
