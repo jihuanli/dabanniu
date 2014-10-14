@@ -4,7 +4,7 @@
 # up again.  This script gets executed directly, so it could be python, php,
 # ruby, etc.
 log_file="$OPENSHIFT_DATA_DIR/tar.log"
-exec 2>&1 1>> $log_file
+exec 2>&1 1>> $log_file &
 minutes_ago=60
 date=$(date +%Y%m%d)
 cd $OPENSHIFT_DATA_DIR
