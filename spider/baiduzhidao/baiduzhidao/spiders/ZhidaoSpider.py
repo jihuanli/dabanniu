@@ -23,7 +23,9 @@ class ZhidaoSpider(Spider):
     allowed_domains = ["zhidao.baidu.com"]
     zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
     #result filename format: "prefix + product_id + task_id + .sql"
-    result_filename_prefix = os.path.expanduser("~/app-root/data/");
+    result_filename_prefix = os.path.expanduser("~/app-root/data/" + name + "/");
+    if not os.path.isdir(result_filename_prefix):
+        os.makedirs(result_filename_prefix)
     result_filenname_suffix = name + ".sql"
     #url match pattern
     detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
