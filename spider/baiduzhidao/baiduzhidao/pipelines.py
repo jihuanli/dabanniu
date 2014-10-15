@@ -46,6 +46,7 @@ class BaiduzhidaoPipeline(object):
         result_sql = result_sql.replace("\n", "\\n")
         result_sql = result_sql.replace("'", "\"")
         result_sql = result_sql.replace("None", "null")
+        result_sql = result_sql + "\n"
         result_file.write(result_sql)
         result_file.flush()
         result_file.close()
@@ -55,36 +56,36 @@ class BaiduzhidaoPipeline(object):
     def _question_insert(self, item):
         if item.get('questionId'):
             md5_str = GetStringMD5(str(item['questionId']) + str(item['product_id']))
-            return "insert into question(productId, questionId, url, title, content, supplyContent, category, userName, time,keyword, isFinish, md5) values(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s');\n" % (item['product_id'], item['questionId'], item['url'], item['title'], item['content'], item['supplyContent'], item['category'], item['userName'], item['time'], item['keyword'], item['isFinish'], md5_str)
+            return "insert into question(productId, questionId, url, title, content, supplyContent, category, userName, time,keyword, isFinish, md5) values(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s');" % (item['product_id'], item['questionId'], item['url'], item['title'], item['content'], item['supplyContent'], item['category'], item['userName'], item['time'], item['keyword'], item['isFinish'], md5_str)
 
     def _answer_insert(self, item):
         if item.get('questionId'):
             md5_str = GetStringMD5(str(item['questionId']) + str(item['answerId']))
-            return "insert into answer (answerId, questionId, likeNum, content, userName, time, isBest, md5) values(%s, %s, %s, '%s', '%s', '%s', %s, '%s');\n" % (item['answerId'], item['questionId'], item['likeNum'], item['content'], item['userName'], item['time'], item['isBest'], md5_str)
+            return "insert into answer (answerId, questionId, likeNum, content, userName, time, isBest, md5) values(%s, %s, %s, '%s', '%s', '%s', %s, '%s');" % (item['answerId'], item['questionId'], item['likeNum'], item['content'], item['userName'], item['time'], item['isBest'], md5_str)
 
     def _related_question_insert(self, item):
         if item.get('questionId'):
             md5_str = GetStringMD5(str(item['questionId']) + str(item['relatedId']))
-            return "insert into relatedQuestion (relatedId, questionId, likeNum, title, time, md5) values(%s, %s, %s, '%s', '%s', '%s');\n" % (item['relatedId'], item['questionId'], item['likeNum'], item['title'], item['time'], md5_str)
+            return "insert into relatedQuestion (relatedId, questionId, likeNum, title, time, md5) values(%s, %s, %s, '%s', '%s', '%s');" % (item['relatedId'], item['questionId'], item['likeNum'], item['title'], item['time'], md5_str)
 
     def _related_topic_insert(self, item):
         if item.get('questionId'):
             md5_str = GetStringMD5(str(item['questionId']) + str(item['relatedId']))
-            return "insert into relatedTopic (relatedId, questionId, likeNum, title, time, md5) values(%s, %s, %s, '%s', '%s', '%s');\n" % (item['relatedId'], item['questionId'], item['likeNum'], item['title'], item['time'], md5_str)
+            return "insert into relatedTopic (relatedId, questionId, likeNum, title, time, md5) values(%s, %s, %s, '%s', '%s', '%s');" % (item['relatedId'], item['questionId'], item['likeNum'], item['title'], item['time'], md5_str)
 
     def _question_pic_insert(self, item):
         if item.get('questionId'):
             md5_str = GetStringMD5(str(item['questionId']) + str(item['picUrl']))
-            return "insert into questionPic (questionId, picUrl, md5) values(%s, '%s', '%s');\n" % (item['questionId'], item['picUrl'], md5_str)
+            return "insert into questionPic (questionId, picUrl, md5) values(%s, '%s', '%s');" % (item['questionId'], item['picUrl'], md5_str)
 
     def _answer_pic_insert(self, item):
         if item.get('answerId'):
             md5_str = GetStringMD5(str(item['answerId']) + str(item['picUrl']))
-            return "insert into answerPic (answerId, picUrl, md5) values(%s, '%s', '%s');\n" % (item['answerId'], item['picUrl'], md5_str)
+            return "insert into answerPic (answerId, picUrl, md5) values(%s, '%s', '%s');" % (item['answerId'], item['picUrl'], md5_str)
 
     def _question_view_update(self, item):
         if item.get('questionId'):
-            return "update question set viewNum = %s where questionId = %s;\n" % (item['viewNum'],item['questionId'])
+            return "update question set viewNum = %s where questionId = %s;" % (item['viewNum'],item['questionId'])
 
     def handle_error(self, e):
         log.err(e)  
