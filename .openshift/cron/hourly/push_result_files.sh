@@ -7,7 +7,7 @@
 log_file="$OPENSHIFT_DATA_DIR/tar.log"
 exec 2>&1 1>> $log_file &
 minutes_ago=60
-date_scp="$(date +%Y%m%d)22"
+date_scp="$(date +%Y%m%d)12"
 date=$(date +%Y%m%d%H)
 if [ $date -eq $date_scp ];then
   echo "=========start build tar file: $date============="
