@@ -23,6 +23,7 @@ class ZhidaoSpider(Spider):
     allowed_domains = ["zhidao.baidu.com"]
     zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
     #result filename format: "prefix + product_id + task_id + .sql"
+    conf_path = os.path.expanduser("~/app-root/data/")
     result_filename_prefix = os.path.expanduser("~/app-root/data/" + name + "/");
     if not os.path.isdir(result_filename_prefix):
         os.makedirs(result_filename_prefix)
@@ -34,7 +35,7 @@ class ZhidaoSpider(Spider):
     have_fetch_set = set()
     
     # spider conf
-    spider_conf_filename = result_filename_prefix + "spider.conf"
+    spider_conf_filename = conf_path + "spider.conf"
     spider_name = "unknown_spider"
     if os.path.isfile(spider_conf_filename):
         spider_file = open(spider_conf_filename)
@@ -49,7 +50,7 @@ class ZhidaoSpider(Spider):
         while True:
             self.have_fetch_set.clear()
             conn=httplib.HTTPConnection('182.92.67.121',8888)
-            dest_url = str("/gettask?spider_name=") + str(self.spider_name)
+            dest_url = str("/gettask?spider_name=") + str(self.spider_name) + "&spider_type=zhidao"
             conn.request('GET', dest_url)
             task_data = conn.getresponse().read()
             if task_data.find("taskId") == False:
