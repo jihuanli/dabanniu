@@ -36,7 +36,7 @@ class ZhidaoSpider(Spider):
     
     # spider conf
     spider_conf_filename = conf_path + "spider.conf"
-    spider_name = "unknown_spider"
+    spider_name = ""
     if os.path.isfile(spider_conf_filename):
         spider_file = open(spider_conf_filename)
         t_spider_name = spider_file.readline()
