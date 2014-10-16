@@ -8,9 +8,10 @@ log_file="$OPENSHIFT_DATA_DIR/zhidao_tar.log"
 exec 2>&1 1>> $log_file &
 minutes_ago=60
 date_scp="$(date +%Y%m%d)12"
-date=$(date +%Y%m%d%H)
+date_h=$(date +%Y%m%d%H)
+date=$(date +%Y%m%d)
 dest_dir="$OPENSHIFT_DATA_DIR/zhidao"
-if [ $date -eq $date_scp ];then
+if [ $date_h -eq $date_scp ];then
   echo "=========start build tar file: $date============="
   cd $dest_dir
   #拷贝文件到日期目录下
