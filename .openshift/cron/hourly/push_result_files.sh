@@ -21,5 +21,6 @@ if [ $date_h -eq $date_scp ];then
   #压缩
   result_tar_filename="$date.tar.gz"
   tar -zcvf $result_tar_filename . 
+  md5sum $result_tar_filename > "$result_tar_filename.md5"
   echo "=========finish build tar file: $result_tar_filename============="
 fi
