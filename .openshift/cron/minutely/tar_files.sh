@@ -7,23 +7,25 @@
 log_file="$OPENSHIFT_DATA_DIR/zhidao_tar.log"
 exec 2>&1 1>> $log_file &
 minutes_ago=60
-date_scp="$(date +%Y%m%d)05"
-echo $date_scp
+date_scp="$(date +%Y%m%d)06"
 date_h=$(date +%Y%m%d%H)
-echo $date_h
 date=$(date +%Y%m%d)
-echo $date
 dest_dir="$OPENSHIFT_DATA_DIR/zhidao"
+result_tar_filename="$date.tar.gz"
+
 if [ $date_h -eq $date_scp ];then
-  echo "=========start build tar file: $date============="
   cd $dest_dir
   #拷贝文件到日期目录下
-  mkdir $date
-  find $dest_dir -mmin +$minutes_ago -name "*.sql" -type f | xargs -i mv {} $date 
+  if [ ! -d $date ];then
+    mkdir $date
+  fi
+  find $dest_dir -maxdepth 1 -mmin +$minutes_ago -name "*.sql" -type f | xargs -i mv {} $date 
   cd $date
-  #压缩
-  result_tar_filename="$date.tar.gz"
-  tar -zcvf $result_tar_filename . 
-  md5sum $result_tar_filename > "$result_tar_filename.md5"
-  echo "=========finish build tar file: $result_tar_filename============="
+  if [ ! -f "$result_tar_filename" ];then
+    echo "=========start build tar file: $date============="
+    #压缩
+    tar -zcvf $result_tar_filename *.sql 
+    md5sum $result_tar_filename > "$result_tar_filename.md5"
+    echo "=========finish build tar file: $result_tar_filename============="
+  fi
 fi
