@@ -7,7 +7,7 @@
 log_file="$OPENSHIFT_DATA_DIR/zhidao_tar.log"
 exec 2>&1 1>> $log_file &
 minutes_ago=60
-date_scp="$(date +%Y%m%d)1"
+date_scp="$(date +%Y%m%d)05"
 echo $date_scp
 date_h=$(date +%Y%m%d%H)
 echo $date_h
