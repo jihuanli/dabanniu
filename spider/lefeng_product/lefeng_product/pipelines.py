@@ -36,7 +36,7 @@ class LeFengProductPipeline(object):
 
         #dump to files
         timestamp = time.strftime('%Y-%m-%d',time.localtime(time.time()))
-        result_file_name = str(spider.result_filename_prefix) + str(item.get('product_id')) + "_" + str(item.get('task_id')) + "_" + str(timestamp) + "_" + str(spider.result_filenname_suffix)
+        result_file_name = str(spider.result_filename_prefix) + str(item.get('task_id')) + "_" + str(timestamp) + "_" + str(spider.result_filenname_suffix)
         result_file = open(result_file_name, 'a')
         result_sql = result_sql.encode("utf-8")
         result_sql = result_sql.replace("None", "null")
@@ -48,9 +48,8 @@ class LeFengProductPipeline(object):
 
 
     def _product_insert(self, item):
-        if item.get('questionId'):
-            md5_str = GetStringMD5(str(item['questionId']) + str(item['product_id']))
-            return "insert into question(productId, questionId, url, title, content, supplyContent, category, userName, time,keyword, isFinish, md5) values(%s, %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, '%s');" % (item['product_id'], item['questionId'], TransformSQLString(item['url']), TransformSQLString(item['title']), TransformSQLString(item['content']), TransformSQLString(item['supplyContent']), TransformSQLString(item['category']), TransformSQLString(item['userName']), TransformSQLString(item['time']), TransformSQLString(item['keyword']), item['isFinish'], md5_str)
+        if item.get('product_id'):
+            return "insert into lefeng_product(product_id, product_name, market_price, pic_url, comment_num, like_num) values(%s, '%s', '%s', '%s', '%s', '%s');" % (item['product_id'], TransformSQLString(item['product_name']), item['market_price'], TransformSQLString(item['product_pics']), item['comment_count'], item['favor_count'])
 
     def handle_error(self, e):
         log.err(e)  

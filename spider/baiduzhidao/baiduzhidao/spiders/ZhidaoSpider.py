@@ -5,9 +5,7 @@ from scrapy.spider import Spider
 from scrapy.http import Response, Request
 from baiduzhidao.items import ZhidaoQuestion,ZhidaoAnswer,RelatedQuestion,QuestionPic,AnswerPic,QuestionViewNum,RelatedTopic
 from datetime import datetime
-from .urlData import *
 from .spider_common import *
-from .oldUrl import *
 import json as json_mod
 from scrapy import signals,log
 from urllib import quote
@@ -22,42 +20,39 @@ class ZhidaoSpider(Spider):
     name = "zhidao"
     allowed_domains = ["zhidao.baidu.com"]
     zhidao_url_prefix = "http://zhidao.baidu.com/search?word=";
+    #url match pattern
+    detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
+    view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
+
     #result filename format: "prefix + product_id + task_id + .sql"
     conf_path = os.path.expanduser("~/app-root/data/")
     result_filename_prefix = os.path.expanduser("~/app-root/data/" + name + "/");
     if not os.path.isdir(result_filename_prefix):
         os.makedirs(result_filename_prefix)
     result_filenname_suffix = name + ".sql"
-    #url match pattern
-    detail_page_pattern = re.compile(r'zhidao.baidu.com/question/([0-9]+).html')
-    view_num_url_pattern = re.compile(r'cp.zhidao.baidu.com/v.php\?q=([0-9]+)')
     html_tag_pattern = re.compile(r'<[^>]+>')
     have_fetch_set = set()
     
     # spider conf
     spider_conf_filename = conf_path + "spider.conf"
-    spider_name = ""
     if os.path.isfile(spider_conf_filename):
         spider_file = open(spider_conf_filename)
-        t_spider_name = spider_file.readline()
-        if t_spider_name:
-            spider_name = t_spider_name 
+        spider_name = spider_file.readline()
         spider_file.close();
 
     #construct the request from the start utls
     def start_requests(self):
         # task init
         while True:
-            self.have_fetch_set.clear()
             conn=httplib.HTTPConnection('182.92.67.121',8888)
-            dest_url = str("/gettask?spider_name=") + str(self.spider_name) + "&spider_type=zhidao"
+            dest_url = str("/gettask?spider_name=") + str(self.spider_name) + "&spider_type=" + self.name
             conn.request('GET', dest_url)
             task_data = conn.getresponse().read()
-            if task_data.find("taskId") == False:
+            if task_data.find("taskId") == -1:
                 continue
-            if ~task_data.find("productId") == False:
+            if task_data.find("productId") == -1:
                 continue
-            if ~task_data.find("keyword") == False:
+            if task_data.find("keyword") == -1:
                 continue
             conn.close()
             task_json_data = json.loads(task_data)
@@ -71,10 +66,7 @@ class ZhidaoSpider(Spider):
     def parse_list_page(self, response):
         hxs = Selector(response)
         for url in hxs.xpath('.//a[@class="ti"]/@href').extract():
-            if not (url in oldurl):
-                yield Request(url, meta = response.meta, callback = self.parse_detail_page, priority = 5)
-            else:
-                log.err(url+"==========================is fetched")
+            yield Request(url, meta = response.meta, callback = self.parse_detail_page, priority = 5)
         for url in hxs.xpath('.//div[@class="pager"]/a/@href').extract():
             newUrl="http://zhidao.baidu.com" + url
             if not (newUrl in self.have_fetch_set):
@@ -277,7 +269,8 @@ class ZhidaoSpider(Spider):
                 rq['likeNum'] = 0
             yield rq
     def parse(self, response):
+        self.have_fetch_set.clear()
         meta=response.meta
         if not meta.get("product_id"):
-            log.error("===================Error... missing product_id")
+            log.err("===================Error... missing product_id")
         return self.parse_list_page(response)
