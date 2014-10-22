@@ -1,0 +1,19 @@
+2014-10-22 16:32:52+0800 [lefeng_product] ERROR: Spider error processing <GET http://product.lefeng.com/pklist/212001.html> (referer: http://s.lefeng.com/directory/26000_0_0_0_0_0_0_0_1.html)
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1178, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 800, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 362, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 458, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 545, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/home/jihuanli/dabanniu/spider/lefeng_product/lefeng_product/spiders/lefeng_product_spider.py", line 93, in parse_detail_page
+	    market_price = first_item(hxs.xpath('.//p[@class="specials"/del/text()]').extract())
+	  File "/usr/lib/pymodules/python2.7/scrapy/selector/unified.py", line 98, in xpath
+	    raise ValueError("Invalid XPath: %s" % query)
+	exceptions.ValueError: Invalid XPath: .//p[@class="specials"/del/text()]
+	
