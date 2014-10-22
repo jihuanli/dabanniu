@@ -5,9 +5,7 @@ from scrapy.spider import Spider
 from scrapy.http import Response, Request
 from baiduzhidao.items import ZhidaoQuestion,ZhidaoAnswer,RelatedQuestion,QuestionPic,AnswerPic,QuestionViewNum,RelatedTopic
 from datetime import datetime
-from .urlData import *
 from .spider_common import *
-from .oldUrl import *
 import json as json_mod
 from scrapy import signals,log
 from urllib import quote
@@ -68,10 +66,7 @@ class ZhidaoSpider(Spider):
     def parse_list_page(self, response):
         hxs = Selector(response)
         for url in hxs.xpath('.//a[@class="ti"]/@href').extract():
-            if not (url in oldurl):
-                yield Request(url, meta = response.meta, callback = self.parse_detail_page, priority = 5)
-            else:
-                log.err(url+"==========================is fetched")
+            yield Request(url, meta = response.meta, callback = self.parse_detail_page, priority = 5)
         for url in hxs.xpath('.//div[@class="pager"]/a/@href').extract():
             newUrl="http://zhidao.baidu.com" + url
             if not (newUrl in self.have_fetch_set):
@@ -277,5 +272,5 @@ class ZhidaoSpider(Spider):
         self.have_fetch_set.clear()
         meta=response.meta
         if not meta.get("product_id"):
-            log.error("===================Error... missing product_id")
+            log.err("===================Error... missing product_id")
         return self.parse_list_page(response)
