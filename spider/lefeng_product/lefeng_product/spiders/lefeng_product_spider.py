@@ -2,7 +2,7 @@
 import sys,re,os
 from scrapy.selector import Selector
 from scrapy.spider import Spider
-from scrapy.http import Response, Request
+from scrapy.http import Response,Request
 from lefeng_product.items import LeFengProduct
 from datetime import datetime
 from .spider_common import *
@@ -18,7 +18,6 @@ class LeFengProductSpider(Spider):
     allowed_domains = ["lefeng.com"]
     lefeng_product_url_prefix = "http://s.lefeng.com/directory/26000_0_0_0_0_0_0_0_";
     max_page_no = 170 
-    max_page_no = 2 
     #url match pattern
     detail_page_pattern = re.compile(r'http://product.lefeng.com/product/([0-9]+).html')
 
@@ -46,7 +45,7 @@ class LeFengProductSpider(Spider):
     #construct the request from the start utls
     def start_requests(self):
         self.init()
-        if True:
+        while True:
             if self.spider_name == None or self.spider_name == "" :
                 self.load_conf();
             conn=httplib.HTTPConnection('182.92.67.121',8888)
@@ -54,14 +53,14 @@ class LeFengProductSpider(Spider):
             conn.request('GET', dest_url)
             task_data = conn.getresponse().read()
             if task_data.find("taskId") == -1:
-                log.error("Task error:missing task id")
-                #continue
+                log.err("Task error:missing task id")
+                continue
             if task_data.find("productId") == -1:
-                log.error("Task error:missing product id")
-                #continue
+                log.err("Task error:missing product id")
+                continue
             if task_data.find("keyword") == -1:
-                log.error("Task error:missing keyword")
-                #continue
+                log.err("Task error:missing keyword")
+                continue
             conn.close()
             task_json_data = json.loads(task_data)
             meta = {}
@@ -76,12 +75,12 @@ class LeFengProductSpider(Spider):
             product_id = self.detail_page_pattern.search(url).group(1)
             response.meta['product_id'] = product_id
             yield Request(url, meta = response.meta, callback = self.parse_detail_page, priority = 5)
-            break
 
     def parse_detail_page(self, response):
         hxs = Selector(response)
         lefeng_product = LeFengProduct()
         lefeng_product['product_id'] = response.meta['product_id']
+        lefeng_product['task_id'] = response.meta['task_id']
 
         # product_name
         product_name = first_item(hxs.xpath('.//span[@class="pname"]/text()').extract())
@@ -91,32 +90,32 @@ class LeFengProductSpider(Spider):
        
         # market_price       
         market_price = first_item(hxs.xpath('.//p[@class="specials"]/del/text()').extract()) 
-        if not market_price:
-            market_price = 0
+        tmp_str = "市场价："
+        market_price = market_price.replace(tmp_str.decode("utf-8"),"")
         lefeng_product['market_price'] = market_price
        
         # product_pics
-        pic_urls = ""
-        for pic_url in hxs.xpath('.//div[@class="spec-item"]/a/img/@src').extract():
-            print pic_url 
-            pic_urls = pic_urls + ";"
-        if pic_urls == "" or pic_urls == ";":
-            pci_urls = ""
-            for pic_url in hxs.xpath('.//div[@class="pic"]/img[@src]').extract():
-                print pic_url
-                pic_urls = pic_urls + ";"
-        lefeng_product['product_pics'] = pic_urls
+        pic_url = first_item(hxs.xpath('.//img[@class="jqzoom"]/@src').extract()) 
+        if not pic_url:
+            pic_url = first_item(hxs.xpath('//div[@class="pic"]/img/@src').extract())
+        lefeng_product['product_pics'] = pic_url
 
         # comment_count 
-        comment_count = first_item(hxs.xpath('.//p[@class="messagenu"]/a/text()').extract())
+        comment_count = first_item(hxs.xpath('.//table[@class="hpl"]/tbody/tr/td/i/em/text()').extract())
         if not comment_count:
             comment_count = 0
         lefeng_product['comment_count'] = comment_count
+        
+        # favor_count
+        favor_count = first_item(hxs.xpath('.//a[@class="save"]/@fc').extract())
+        if not favor_count:
+            favor_count = first_item(hxs.xpath('.//a[@class="save"]/span/text()').extract())
+        lefeng_product['favor_count'] = favor_count
 
-        print lefeng_product
+        yield lefeng_product
 
     def parse(self, response):
         meta=response.meta
         if not meta.get("task_id"):
-            log.error("===================Error... missing task_id")
+            log.err("===================Error... missing task_id=======================")
         return self.parse_list_page(response)
