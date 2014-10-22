@@ -1,0 +1,31 @@
+2014-10-22 11:42:54+0800 [zhidao] ERROR: Obtaining request from start requests
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1169, in run
+	    self.mainLoop()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1178, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 800, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/lib/pymodules/python2.7/scrapy/utils/reactor.py", line 41, in __call__
+	    return self._func(*self._a, **self._kw)
+	--- <exception caught here> ---
+	  File "/usr/lib/pymodules/python2.7/scrapy/core/engine.py", line 106, in _next_request
+	    request = next(slot.start_requests)
+	  File "/home/zhangxl/dabanniu/spider/baiduzhidao/baiduzhidao/spiders/ZhidaoSpider.py", line 54, in start_requests
+	    conn.request('GET', dest_url)
+	  File "/usr/lib/python2.7/httplib.py", line 958, in request
+	    self._send_request(method, url, body, headers)
+	  File "/usr/lib/python2.7/httplib.py", line 992, in _send_request
+	    self.endheaders(body)
+	  File "/usr/lib/python2.7/httplib.py", line 954, in endheaders
+	    self._send_output(message_body)
+	  File "/usr/lib/python2.7/httplib.py", line 814, in _send_output
+	    self.send(msg)
+	  File "/usr/lib/python2.7/httplib.py", line 776, in send
+	    self.connect()
+	  File "/usr/lib/python2.7/httplib.py", line 757, in connect
+	    self.timeout, self.source_address)
+	  File "/usr/lib/python2.7/socket.py", line 571, in create_connection
+	    raise err
+	socket.error: [Errno 4] Interrupted system call
+	

@@ -1,0 +1,53 @@
+2014-10-22 20:31:56+0800 [scrapy] ERROR: 'Task error:missing task id'
+2014-10-22 20:31:56+0800 [jumeiProduct] ERROR: Obtaining request from start requests
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1169, in run
+	    self.mainLoop()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1178, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 800, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/lib/pymodules/python2.7/scrapy/utils/reactor.py", line 41, in __call__
+	    return self._func(*self._a, **self._kw)
+	--- <exception caught here> ---
+	  File "/usr/lib/pymodules/python2.7/scrapy/core/engine.py", line 106, in _next_request
+	    request = next(slot.start_requests)
+	  File "/home/zhangxl/dabanniu/spider/jumeiProduct/jumeiProduct/spiders/jumeiProductSpider.py", line 64, in start_requests
+	    meta["task_id"] = task_json_data[0]['taskId']
+	exceptions.TypeError: 'NoneType' object has no attribute '__getitem__'
+	
+2014-10-22 20:32:22+0800 [scrapy] ERROR: 'Task error:missing task id'
+2014-10-22 20:32:22+0800 [jumeiProduct] ERROR: Obtaining request from start requests
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1169, in run
+	    self.mainLoop()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1178, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 800, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/lib/pymodules/python2.7/scrapy/utils/reactor.py", line 41, in __call__
+	    return self._func(*self._a, **self._kw)
+	--- <exception caught here> ---
+	  File "/usr/lib/pymodules/python2.7/scrapy/core/engine.py", line 106, in _next_request
+	    request = next(slot.start_requests)
+	  File "/home/zhangxl/dabanniu/spider/jumeiProduct/jumeiProduct/spiders/jumeiProductSpider.py", line 64, in start_requests
+	    meta["task_id"] = task_json_data[0]['taskId']
+	exceptions.TypeError: 'NoneType' object has no attribute '__getitem__'
+	
+2014-10-22 20:34:34+0800 [jumeiProduct] ERROR: Spider error processing <GET http://mall.jumei.com/skinfood/product_306.html> (referer: http://search.jumei.com/?filter=0-11-1)
+	Traceback (most recent call last):
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 1178, in mainLoop
+	    self.runUntilCurrent()
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/base.py", line 800, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 362, in callback
+	    self._startRunCallbacks(result)
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 458, in _startRunCallbacks
+	    self._runCallbacks()
+	--- <exception caught here> ---
+	  File "/usr/lib/python2.7/dist-packages/twisted/internet/defer.py", line 545, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	  File "/home/zhangxl/dabanniu/spider/jumeiProduct/jumeiProduct/spiders/jumeiProductSpider.py", line 136, in parse_detail_page
+	    key = key.replace('\xa0','')
+	exceptions.UnicodeDecodeError: 'ascii' codec can't decode byte 0xa0 in position 0: ordinal not in range(128)
+	
