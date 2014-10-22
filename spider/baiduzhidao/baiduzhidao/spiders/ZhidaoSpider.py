@@ -53,11 +53,11 @@ class ZhidaoSpider(Spider):
             dest_url = str("/gettask?spider_name=") + str(self.spider_name) + "&spider_type=zhidao"
             conn.request('GET', dest_url)
             task_data = conn.getresponse().read()
-            if task_data.find("taskId") == False:
+            if task_data.find("taskId") == -1:
                 continue
-            if ~task_data.find("productId") == False:
+            if task_data.find("productId") == -1:
                 continue
-            if ~task_data.find("keyword") == False:
+            if task_data.find("keyword") == -1:
                 continue
             conn.close()
             task_json_data = json.loads(task_data)
