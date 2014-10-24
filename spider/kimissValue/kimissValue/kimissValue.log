@@ -1,0 +1,20 @@
+2014-10-24 17:22:46+0800 [-] ERROR: Unhandled error in Deferred:
+2014-10-24 17:22:46+0800 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/crawler.py", line 92, in start
+	    if self.start_crawling():
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/crawler.py", line 124, in start_crawling
+	    return self._start_crawler() is not None
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/crawler.py", line 145, in _start_crawler
+	    crawler.start()
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 1237, in unwindGenerator
+	    return _inlineCallbacks(None, gen, Deferred())
+	--- <exception caught here> ---
+	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/defer.py", line 1099, in _inlineCallbacks
+	    result = g.send(result)
+	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/crawler.py", line 66, in start
+	    yield self.engine.open_spider(self._spider, self._start_requests())
+	  File "/home/jihuanli/dabanniu/spider/kimissValue/kimissValue/spiders/kimissValue_spider.py", line 21, in start_requests
+	    start_url=self.kimiss_url_prefix+str(task_json_data[0]['productId'])+"/1/"
+	exceptions.AttributeError: 'KimissValueSpider' object has no attribute 'kimiss_url_prefix'
+	

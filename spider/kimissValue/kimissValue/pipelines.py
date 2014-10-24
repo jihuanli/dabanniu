@@ -6,10 +6,19 @@ import MySQLdb
 from kimissValue.items import TotalItem,DetailItem,ContentItem
 import md5
 import time
+
 def GetStringMD5(to_md5_str):
     m = md5.new()
     m.update(to_md5_str)
     return m.hexdigest()
+
+def TransformSQLString(sql_str):
+    if sql_str == None:
+        return ""
+    sql_str = sql_str.replace("\n", "\\n");
+    sql_str = sql_str.replace("'", "\'")  
+    return sql_str
+
 class KimissvaluePipeline(object):
     def process_item(self, item, spider):
         if isinstance(item,TotalItem):
@@ -29,10 +38,10 @@ class KimissvaluePipeline(object):
         result_file.close()
         return item
     def kaka_a(self,item):
-       return "insert into kimiss_product_review(producrId,veryGood,good,veryBad,bad,common)values(%s,%s,%s,%s,%s,%s)" % (item['productId'],int(item['veryGood']),int(item['good']),int(item['veryBad']),int(item['bad']),int(item['common']))
+       return "insert into kimiss_product_review(productId,veryGood,good,veryBad,bad,common)values(%s,%s,%s,%s,%s,%s);" % (item['productId'],int(item['veryGood']),int(item['good']),int(item['veryBad']),int(item['bad']),int(item['common']))
     def kaka_b(self,item):
        md5_str=GetStringMD5(str(item['productId'])+str(item['commentId']))
-       return "insert into kimiss_comment(productId,buying,comment_time,title,content,commentId,md5)values(%s,'%s','%s','%s','%s',%s,'%s')" % (item['productId'],item['buying'],item['comment_time'],item['content'],item['title'],long(item['commentId']),md5_str)
+       return "insert into kimiss_comment(productId,buying,comment_time,title,content,commentId,md5)values(%s,'%s','%s','%s','%s',%s,'%s');" % (item['productId'],TransformSQLString(item['buying']),TransformSQLString(item['comment_time']),TransformSQLString(item['content']),TransformSQLString(item['title']),long(item['commentId']),md5_str)
     def kaka_c(self,item):
        md5_str=GetStringMD5(str(item['productId'])+str(item['commentId']))
-       return "insert into kimiss_userinfo(productId,hair,skin,age,commentId,md5)values(%s,'%s','%s','%s',%s,'%s')" % (item['productId'],item['hair'],item['skin'],item['age'],long(item['commentId']),md5_str)
+       return "insert into kimiss_userinfo(productId,hair,skin,age,commentId,md5)values(%s,'%s','%s','%s',%s,'%s');" % (item['productId'],item['hair'],item['skin'],item['age'],long(item['commentId']),md5_str)

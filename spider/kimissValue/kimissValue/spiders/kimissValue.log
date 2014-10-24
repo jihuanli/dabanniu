@@ -1,5 +1,4 @@
-
-2014-10-24 15:57:55+0800 [kimissValue] ERROR: Obtaining request from start requests
+2014-10-24 17:31:32+0800 [kimissValue] ERROR: Obtaining request from start requests
 	Traceback (most recent call last):
 	  File "/usr/local/lib/python2.7/dist-packages/Twisted-14.0.0-py2.7-linux-x86_64.egg/twisted/internet/base.py", line 1192, in run
 	    self.mainLoop()
@@ -12,7 +11,7 @@
 	--- <exception caught here> ---
 	  File "/usr/local/lib/python2.7/dist-packages/Scrapy-0.22.2-py2.7.egg/scrapy/core/engine.py", line 111, in _next_request
 	    request = next(slot.start_requests)
-	  File "/home/jihuanli/dabanniu/spider/kimissValue/kimissValue/spiders/kimissValue_spider.py", line 41, in start_requests
+	  File "/home/jihuanli/dabanniu/spider/kimissValue/kimissValue/spiders/kimissValue_spider.py", line 44, in start_requests
 	    conn.request('GET',dest_url)
 	  File "/usr/lib/python2.7/httplib.py", line 973, in request
 	    self._send_request(method, url, body, headers)
@@ -30,3 +29,5 @@
 	    raise err
 	socket.error: [Errno 4] Interrupted system call
 	
+2014-10-24 17:32:35+0800 [scrapy] ERROR: '======================================='
+2014-10-24 17:32:35+0800 [scrapy] ERROR: '======================================='

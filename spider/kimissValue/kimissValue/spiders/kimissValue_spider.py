@@ -3,12 +3,14 @@ from scrapy.selector import Selector
 from scrapy.http import Request
 import re
 from scrapy.log import err
-from scrapy.spider import BaseSpider
+from scrapy.spider import Spider
 from kimissValue.items import TotalItem,DetailItem,ContentItem
 import httplib
 import json
 import os
-class KimissValueSpider(BaseSpider):
+import time
+
+class KimissValueSpider(Spider):
     name="kimissValue"
     allowed_domain=["kimiss.com"]
     #start_urls=["http://product.kimiss.com/product/5711/1/"]
@@ -31,13 +33,14 @@ class KimissValueSpider(BaseSpider):
         spider_name=spider_name.replace(" ","")
         spider_name=spider_name.replace("\n","")
         spider_file.close()
+
     #construct the request from the start urls
     def start_requests(self):
         while True:
-            self.urlAll=[]
+            if len(self.urlAll) > 10000:
+                self.urlAll=[]
             conn=httplib.HTTPConnection("182.92.67.121","8888") 
             dest_url="/gettask?spider_name="+self.spider_name+"&spider_type="+self.name
-            print dest_url
             conn.request('GET',dest_url)
             task_data=conn.getresponse().read()   
             if task_data.find("taskId")==-1:
@@ -144,8 +147,3 @@ class KimissValueSpider(BaseSpider):
                         yield Request(url_url_url,callback=self.kaka,meta=hea)
     def parse(self,response):
         return self.kaka(response)
-
-
-
-        
-     
