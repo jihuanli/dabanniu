@@ -12,11 +12,16 @@ ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill
 scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
 
 spider_name="lefeng_product"
-cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/lefeng_product/lefeng_product/spiders
+cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/$spider_name/$spider_name/spiders
+ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
+scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
+
+spider_name="jumeiProduct"
+cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/$spider_name/$spider_name/spiders
 ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
 scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
 
 spider_name="kimissValue"
-cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/kimissValue/kimissValue/spiders
+cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/$spider_name/$spider_name/spiders
 ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
 scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
