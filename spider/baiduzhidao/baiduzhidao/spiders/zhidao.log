@@ -29,3 +29,5 @@
 	    raise err
 	socket.error: [Errno 4] Interrupted system call
 	
+2014-12-16 14:41:37+0800 [scrapy] ERROR: '================================================'
+2014-12-16 14:41:37+0800 [scrapy] ERROR: 'http://zhidao.baidu.com/question/454777846560405085.html'

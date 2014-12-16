@@ -86,8 +86,10 @@ class ZhidaoSpider(Spider):
         hxs = Selector(response)
         questionId = self.detail_page_pattern.search(response.url).group(1)
         guide = ZhidaoQuestion()
-        title = first_item(hxs.xpath('.//span[@class="ask-title "]/text()').extract())
+        title = first_item(hxs.xpath('.//span[contains(@class,"ask-title")]/text()').extract())
         if not title:
+            log.err("no title")
+            print "no title"
             return
         guide['title'] =  title.strip()
         guide['isFinish'] = 1
