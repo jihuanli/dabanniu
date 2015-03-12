@@ -37,6 +37,9 @@ class TmallPipeline(object):
 
     def img(self,item):
         md5_str=GetStringMD5(str(item['productId'])+item['brand_big_img']))
+        print  "====================="
+        print  md5_str
+        print  "====================="
         sql =  "insert into tmall_img(productId,brand_big_img,brand_little_img,md5)values(%s,'%s','%s','%s')" % (long(item['productId']),item['brand_big_img'],item['brand_little_img'],md5_str)
         return sql
      
