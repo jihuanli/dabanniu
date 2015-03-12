@@ -10,14 +10,29 @@ class TmallItem(Item):
     # name = Field()
     pass
 
-class ProductItem(Item):
+class ProductCommonItem(Item):
     productId = Field()
     name = Field()
     send_address = Field()
-    standard = Field()
-    origin_price = Field()
-    promote_price = Field()
     url = Field()
     brand = Field()
     catId = Field()
-    taskId = Field() 
+    taskId = Field()
+    parameter = Field()
+    description = Field() 
+
+class ProductImgItem(Item):
+    productId = Field()
+    brand_big_img =Field()
+    brand_little_img =Field()
+
+class ProductDetailItem(Item):
+    productId = Field()
+    skuId = Field()
+    origin_price = Field()
+    standard = Field()
+    color_big_img = Field()
+    color_little_img = Field()
+    color_name = Field()
+    stock = Field()
+
