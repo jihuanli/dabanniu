@@ -69,9 +69,15 @@ class TmallSpider(BaseSpider):
         common['taskId'] = hea['taskId']
         common['url'] = response.url
         common_send_address = hxs.select("//input[@name='region']/@value").extract()
-        common['send_address'] = common_send_address[0]
+        if common_send_address:
+            common['send_address'] = common_send_address[0]
+        else:
+            common['send_address'] = ""
         common_name = hxs.select("//input[@name='title']/@value").extract()
-        common['name'] = html_parser.unescape(common_name[0])
+        if common_name:
+            common['name'] = html_parser.unescape(common_name[0])
+        else:
+            common['name'] = ""
         re_brand = re.search("brand\":\"([^,]*)\"",response.body)
         if re_brand:
             common_brand= re_brand.group(1)
@@ -89,8 +95,12 @@ class TmallSpider(BaseSpider):
         brand_little_img_list = hxs.select("//ul[@class='tb-thumb tm-clear']/li")
         for letter in brand_little_img_list:
             brand_little_img = letter.select("./a/img/@src").extract()
-            img['brand_little_img'] = brand_little_img[0]
-            img['brand_big_img'] = self.process_img(img['brand_little_img'])
+            if brand_little_img:
+                img['brand_little_img'] = brand_little_img[0]
+                img['brand_big_img'] = self.process_img(img['brand_little_img'])
+            else:
+                img['brand_little_img'] = ""
+                img['brand_big_img'] = ""
             yield img
         # 爬取产品详情页详情信息
         detail['productId'] = img['productId']
