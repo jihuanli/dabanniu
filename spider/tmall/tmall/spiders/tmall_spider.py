@@ -47,7 +47,7 @@ class TmallSpider(BaseSpider):
             conn.close()      
             response_dic = json.loads(response_result)
             #pageId = (response_dic[0]["productId"]-1)*60 
-            start_url = self.tmall_url_prefix+response_dic[0]["productId"] + self.tmall_url_suffix + response_dic[0]["keyword"]
+            start_url = self.tmall_url_prefix+str(response_dic[0]["productId"]) + self.tmall_url_suffix + response_dic[0]["keyword"]
             head={}
             head["catId"] = int(response_dic[0]["keyword"])
             head["taskId"] = int(response_dic[0]["taskId"])
