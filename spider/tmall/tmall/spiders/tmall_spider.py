@@ -142,6 +142,7 @@ class TmallSpider(BaseSpider):
             aa = letter.split("@@")
             list_dict.append((aa[0],aa[1]))
         json_data = json.dumps(dict(list_dict))
+        json_data = json_data.encode("utf8")
         #json_date = json_data.replace("\\\\","\\")
         return json_data
     #def list_page(self,response):
