@@ -85,9 +85,15 @@ class TmallSpider(BaseSpider):
         else:
             common['brand'] = ""
         common_description = hxs.select("//div[@class='tb-detail-hd']/p/text()").extract()
-        common['description'] = common_description[0].strip()
+        if common_description:
+            common['description'] = common_description[0].strip()
+        else:
+            common['description'] = ""
         common_parameter = hxs.select("//ul[@id='J_AttrUL']/li/text()").extract()
-        common['parameter'] = self.process_data(common_parameter)
+        if  common_parameter: 
+            common['parameter'] = self.process_data(common_parameter)
+        else:
+            common['parameter'] = ""
         yield common
         # 爬取产品详情页品牌图片
         img['productId'] = common['productId']
