@@ -152,6 +152,8 @@ class TmallSpider(BaseSpider):
         return img
 
     def process_data(self,data):
+        html_parser = HTMLParser.HTMLParser()
+        data = html_parser.unescape(data)
         list_dict = []
         for letter in data:
             letter = letter.replace(":","@@")
@@ -159,6 +161,8 @@ class TmallSpider(BaseSpider):
             aa = letter.split("@@")
             list_dict.append((aa[0],aa[1]))
         json_data = json.dumps(dict(list_dict))
+        err("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
+        err(json_data+"..."+type(json)
         json_data = json_data.encode("utf8")
         return json_data
     #def list_page(self,response):
