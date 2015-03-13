@@ -8,6 +8,11 @@ from tmall.items import ProductCommonItem,ProductImgItem,ProductDetailItem
 from scrapy.log import err
 import time
 import md5
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 def GetStringMD5(to_md5_str):
     err("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
     err("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
