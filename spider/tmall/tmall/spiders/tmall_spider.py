@@ -162,8 +162,8 @@ class TmallSpider(BaseSpider):
             list_dict.append((aa[0],aa[1]))
         json_data = json.dumps(dict(list_dict))
         err("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{")
-        err(json_data+"..."+type(json)
-        json_data = json_data.encode("utf8")
+        err(json_data+"..."+type(json))
+        #json_data = json_data.encode("utf8")
         return json_data
     #def list_page(self,response):
     #    hxs = HtmlXPathSelector(response)
