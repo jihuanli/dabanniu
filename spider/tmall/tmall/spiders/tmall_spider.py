@@ -50,7 +50,7 @@ class TmallSpider(BaseSpider):
             start_url = self.tmall_url_prefix+str(response_dic[0]["productId"]) + self.tmall_url_suffix + response_dic[0]["keyword"]
             head={}
             head["catId"] = int(response_dic[0]["keyword"])
-            head["taskId"] = int(response_dic[0]["taskId"])
+            head["taskId"] = response_dic[0]["taskId"]
             head["productId"] = long(response_dic[0]["productId"])
             yield Request(start_url,callback=self.parse,meta=head) 
              
@@ -96,9 +96,9 @@ class TmallSpider(BaseSpider):
         detail['productId'] = img['productId']
         detail['taskId'] = img['taskId']
         detail_all = re.search("skuMap\":(.*)},\"valLoginIndicator\"",response.body)
-        detail_data = detail_all.group(1)
-        detail_dict = json.loads(detail_data)
-        if len(detail_dict) > 0:
+        if detail_all:
+            detail_data = detail_all.group(1)
+            detail_dict = json.loads(detail_data)
             for letter in detail_dict:
                 detail_detail = detail_dict[letter]
                 detail['skuId'] = long(detail_detail['skuId'])
@@ -123,9 +123,24 @@ class TmallSpider(BaseSpider):
                 else:
                     detail['color_little_img'] = ""
                     detail['color_big_img'] = ""
-                yield detail
-       # origin_price_re = re.search('defaultItemPrice\":\"([^"]*)\",',response.body)
-       # product['origin_price'] = origin_price_re.group(1)
+                yield detail 
+        else:
+            detail['skuId'] = 0
+            detail_origin_price = re.search('defaultItemPrice\":\"([^"]*)\",',response.body)
+            if detail_origin_price:
+                detail['origin_price'] = detail_origin_price.group(1)
+            else:
+                detail['origin_price'] = 0
+            detail_stock = re.search('quantity\":([0-9]*),',response.body)
+            if detail_stock:
+                detail['stock'] = detail_stock.group(1)
+            else:
+                detail['stock'] = 0
+            detail['standard'] = ""
+            detail['color_name'] = ""
+            detail['color_little_img'] = ""
+            detail['color_big_img'] = ""   
+            yield detail
 
     def process_img(self,img):
         if img.find("60x60")!=-1:
@@ -145,7 +160,6 @@ class TmallSpider(BaseSpider):
             list_dict.append((aa[0],aa[1]))
         json_data = json.dumps(dict(list_dict))
         json_data = json_data.encode("utf8")
-        #json_date = json_data.replace("\\\\","\\")
         return json_data
     #def list_page(self,response):
     #    hxs = HtmlXPathSelector(response)
