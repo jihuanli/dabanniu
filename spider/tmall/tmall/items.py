@@ -25,6 +25,7 @@ class ProductImgItem(Item):
     productId = Field()
     brand_big_img =Field()
     brand_little_img =Field()
+    taskId = Field()
 
 class ProductDetailItem(Item):
     productId = Field()
@@ -34,5 +35,6 @@ class ProductDetailItem(Item):
     color_big_img = Field()
     color_little_img = Field()
     color_name = Field()
-    stock = Field()
+    stock = Field() 
+    taskId = Field()
 

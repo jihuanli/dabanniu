@@ -85,6 +85,7 @@ class TmallSpider(BaseSpider):
         yield common
         # 爬取产品详情页品牌图片
         img['productId'] = common['productId']
+        img['taskId']= common['taskId']
         brand_little_img_list = hxs.select("//ul[@class='tb-thumb tm-clear']/li")
         for letter in brand_little_img_list:
             brand_little_img = letter.select("./a/img/@src").extract()
@@ -93,6 +94,7 @@ class TmallSpider(BaseSpider):
             yield img
         # 爬取产品详情页详情信息
         detail['productId'] = img['productId']
+        detail['taskId'] = img['taskId']
         detail_all = re.search("skuMap\":(.*)},\"valLoginIndicator\"",response.body)
         detail_data = detail_all.group(1)
         detail_dict = json.loads(detail_data)
