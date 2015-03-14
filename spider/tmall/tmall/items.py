@@ -38,3 +38,8 @@ class ProductDetailItem(Item):
     stock = Field() 
     taskId = Field()
 
+class ProductSizeItem(Item):
+    productId = Field()
+    skuId = Field()
+    promot_price = Field()
+    taskId = Field()

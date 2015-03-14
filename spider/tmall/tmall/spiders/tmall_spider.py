@@ -3,7 +3,7 @@ from scrapy.selector import HtmlXPathSelector
 from scrapy.spider import BaseSpider
 from scrapy.log import err
 from scrapy.http import Request,Response
-from tmall.items import ProductCommonItem,ProductImgItem,ProductDetailItem
+from tmall.items import ProductCommonItem,ProductImgItem,ProductDetailItem,ProductSizeItem
 import re
 import HTMLParser
 import httplib
@@ -15,6 +15,8 @@ class TmallSpider(BaseSpider):
     allowed_domain = ["tmall"]
     tmall_url_prefix = "http://detail.tmall.hk/hk/item.htm?id=" 
     tmall_url_suffix = "&cat_id="
+
+    m_product_detail_url_prefix = "http://detail.m.tmall.hk/item.htm?id=" 
 
     conf_path=os.path.expanduser("~/app-root/data/")
     result_filename_prefix=os.path.expanduser("~/app-root/data/"+name+"/")
@@ -47,12 +49,16 @@ class TmallSpider(BaseSpider):
             conn.close()      
             response_dic = json.loads(response_result)
             #pageId = (response_dic[0]["productId"]-1)*60 
-            start_url = self.tmall_url_prefix+str(response_dic[0]["productId"]) + self.tmall_url_suffix + response_dic[0]["keyword"]
+            pc_start_url = self.tmall_url_prefix + str(response_dic[0]["productId"]) + self.tmall_url_suffix + response_dic[0]["keyword"]
+            m_start_url = self.m_product_detail_url_prefix + str(response_dic[0]["productId"]) 
             head={}
             head["catId"] = int(response_dic[0]["keyword"])
             head["taskId"] = response_dic[0]["taskId"]
             head["productId"] = long(response_dic[0]["productId"])
-            yield Request(start_url,callback=self.parse,meta=head) 
+            print pc_start_url
+            print m_start_url
+            yield Request(pc_start_url,callback=self.parse,meta=head, priority = 5) 
+            yield Request(m_start_url, callback=self.parseMobileProductDetail, meta=head, priority = 2) 
              
     def product(self,response):
         hxs = HtmlXPathSelector(response)
@@ -176,7 +182,7 @@ class TmallSpider(BaseSpider):
             letter = letter.replace(u"：","@@")
             aa = letter.split("@@")
             list_dict.append((aa[0],aa[1]))
-        json_data = json.dumps(dict(list_dict))
+        json_data = json.dumps(dict(list_dict), ensure_ascii=False)
         return json_data
     #def list_page(self,response):
     #    hxs = HtmlXPathSelector(response)
@@ -190,18 +196,21 @@ class TmallSpider(BaseSpider):
  
     def parse(self,response):
         return self.product(response)
-    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def parseMobileProductDetail(self, response):
+        product_size_info = ProductSizeItem()
+        size_json = re.search("priceInfo\":(.*?),\"resultCode\":0,\"wanrentuanInfo", response.body)
+        if size_json:
+            size_json = size_json.group(1)
+            size_json = size_json.decode("gbk")
+            size_dict = json.loads(size_json)
+            for skuid in size_dict:
+                sku = size_dict[skuid]
+                price = sku['price']['amount']
+                print "skuid[" + str(skuid) + "] price[" + str(price) + "]"
+                product_size_info['productId'] = response.meta['productId']
+                product_size_info['taskId'] = response.meta['taskId']
+                product_size_info['skuId'] = skuid
+                product_size_info['promot_price'] = price 
+                yield product_size_info
+        return 
