@@ -31,5 +31,5 @@ spider_name="tmall"
 #ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
 #scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
 cd $OPENSHIFT_DATA_DIR/tmall;rm -rf *
-
+cd $OPENSHIFT_DATA_DIR/zhidao;rm -rf *
 
