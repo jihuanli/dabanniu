@@ -42,4 +42,5 @@ class ProductSizeItem(Item):
     productId = Field()
     skuId = Field()
     promot_price = Field()
+    price = Field()
     taskId = Field()

@@ -55,10 +55,8 @@ class TmallSpider(BaseSpider):
             head["catId"] = int(response_dic[0]["keyword"])
             head["taskId"] = response_dic[0]["taskId"]
             head["productId"] = long(response_dic[0]["productId"])
-            print pc_start_url
-            print m_start_url
             yield Request(pc_start_url,callback=self.parse,meta=head, priority = 5) 
-            yield Request(m_start_url, callback=self.parseMobileProductDetail, meta=head, priority = 2) 
+            yield Request(m_start_url, callback=self.parseMobileProductDetail, meta=head) 
              
     def product(self,response):
         hxs = HtmlXPathSelector(response)
@@ -207,10 +205,12 @@ class TmallSpider(BaseSpider):
             for skuid in size_dict:
                 sku = size_dict[skuid]
                 price = sku['price']['amount']
-                print "skuid[" + str(skuid) + "] price[" + str(price) + "]"
+                promot_price = sku['promPrice']['price']
+                #print "skuid[" + str(skuid) + "] price[" + str(price) + "]promPrice[" + str(promot_price) + "]"
                 product_size_info['productId'] = response.meta['productId']
                 product_size_info['taskId'] = response.meta['taskId']
                 product_size_info['skuId'] = skuid
-                product_size_info['promot_price'] = price 
+                product_size_info['price'] = price 
+                product_size_info['promot_price'] = promot_price 
                 yield product_size_info
         return 

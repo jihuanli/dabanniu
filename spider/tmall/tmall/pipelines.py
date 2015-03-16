@@ -19,12 +19,10 @@ def GetStringMD5(to_md5_str):
     return m.hexdigest()
 
 def TransformSQLString(sql_str):
-    print "TransformSQLString==>" + str(sql_str)
     if sql_str == None:
         return ""
     sql_str = sql_str.replace("\n", "\\n");
     sql_str = sql_str.replace("'", "\'")
-    print "TransformSQLString==>" + str(sql_str)
     return sql_str
 
 
@@ -63,5 +61,5 @@ class TmallPipeline(object):
         return sql
 
     def size(self,item):
-        sql = "update tmall_detail set promot_price ='%s' where productId=%s and skuId=%s;" % (TransformSQLString(str(item['promot_price'])),str(item['productId']),str(item['skuId']))
+        sql = "update tmall_detail set origin_price = '%s' and promot_price ='%s' where productId=%s and skuId=%s;" % (TransformSQLString(str(item['price'])),TransformSQLString(str(item['promot_price'])),str(item['productId']),str(item['skuId']))
         return sql
