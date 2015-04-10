@@ -52,24 +52,24 @@ class TmallFpProductPipeline(object):
         return item
 
     def common(self,item):
-        sql = "insert into tmall(productId,brand,name,send_address,url,shop_name,parameter,description)values(%s,'%s','%s','%s','%s',%s,'%s','%s');" % (long(item['productId']),TransformSQLString(str(item['brand'])),TransformSQLString(str(item['name'])),TransformSQLString(str(item['send_address'])),TransformSQLString(str(item['url'])),TransformSQLString(str(item['shop_name'])),TransformSQLString(str(item['parameter'])),TransformSQLString(str(item['description'])))
+        sql = "insert into tmall_product(productId,brand,name,send_address,url,seller_name,parameter,description)values(%s,'%s','%s','%s','%s','%s','%s','%s');" % (long(item['productId']),TransformSQLString(str(item['brand'])),TransformSQLString(str(item['name'])),TransformSQLString(str(item['send_address'])),TransformSQLString(str(item['url'])),TransformSQLString(str(item['shop_name'])),TransformSQLString(str(item['parameter'])),TransformSQLString(str(item['description'])))
         return sql
 
     def img(self,item):
         md5_str = GetStringMD5(str(item['productId'])+item['brand_big_img'])
-        sql =  "insert into tmall_img(productId,brand_big_img,brand_little_img,md5)values(%s,'%s','%s','%s');" % (long(item['productId']),TransformSQLString(str(item['brand_big_img'])),TransformSQLString(str(item['brand_little_img'])),md5_str)
+        sql =  "insert into tmall_product_img(productId,brand_big_img,brand_little_img,md5)values(%s,'%s','%s','%s');" % (long(item['productId']),TransformSQLString(str(item['brand_big_img'])),TransformSQLString(str(item['brand_little_img'])),md5_str)
         return sql
 
     def detail(self,item):
         md5_str=GetStringMD5(str(item['productId'])+str(item['color_name'])+str(item['standard']))
-        sql =  "insert into tmall_detail(productId,origin_price,standard,skuId,color_big_img,color_little_img,color_name,stock,md5)values(%s,%s,'%s',%s,'%s','%s','%s',%s,'%s');" % (long(item['productId']),float(item['origin_price']),TransformSQLString(str(item['standard'])),item['skuId'],TransformSQLString(str(item['color_big_img'])),TransformSQLString(str(item['color_little_img'])),TransformSQLString(str(item['color_name'])),item['stock'],md5_str)
-        sql_update = "update tmall_detail set origin_price = %s,stock = %s where productId=%s;" % (float(item['origin_price']),item['stock'],long(item['productId']))
+        sql =  "insert into tmall_product_size(productId,origin_price,standard,skuId,color_big_img,color_little_img,color_name,stock,md5)values(%s,%s,'%s',%s,'%s','%s','%s',%s,'%s');" % (long(item['productId']),float(item['origin_price']),TransformSQLString(str(item['standard'])),item['skuId'],TransformSQLString(str(item['color_big_img'])),TransformSQLString(str(item['color_little_img'])),TransformSQLString(str(item['color_name'])),item['stock'],md5_str)
+        sql_update = "update tmall_product_size set origin_price = %s,stock = %s where productId=%s and md5='%s';" % (float(item['origin_price']),item['stock'],long(item['productId']),md5_str)
         return sql+"\n"+sql_update
 
     def size(self,item):
-        sql = "update tmall_detail set promot_price ='%s' where productId=%s and skuId=%s;" % (TransformSQLString(str(item['promot_price'])),long(item['productId']),item['skuId'])
+        sql = "update tmall_product_size set promot_price ='%s' where productId=%s and md5='%s';" % (TransformSQLString(str(item['promot_price'])),long(item['productId']),md5_str)
         return sql
 
     def sale_value(self,item):
-        sql = "update tmall set sale_num = %s,value_num = %s where productId=%s;" % (item['sale_num'],item['value_num'],long(item['productId']))
+        sql = "update tmall_product set sale_num = %s,value_num = %s where productId=%s;" % (item['sale_num'],item['value_num'],long(item['productId']))
         return sql

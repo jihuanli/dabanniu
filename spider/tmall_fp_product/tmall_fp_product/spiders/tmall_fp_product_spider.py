@@ -200,11 +200,13 @@ class TmallFpProductSpider(BaseSpider):
     
    
     def get_product_page(self,response):
-        err("2222222222222222222222")
         hea = response.meta
         hxs = HtmlXPathSelector(response)
         list_page_num = hxs.select("//b[@class='ui-page-s-len']/text()").extract()
-        list_page_num = list_page_num[0].split("/")[1] 
+        list_page_num = (list_page_num[0].split("/"))[1] 
+        err("222222222222222222222")
+        err(list_page_num)
+        err("222222222222222222222")
         for le in range(1,int(list_page_num)+1):
             product_list_url = hea["list_url"] + "?pageNo=" + str(le)
             yield Request(product_list_url,callback=self.parse_product_list,meta=hea)
@@ -249,11 +251,11 @@ class TmallFpProductSpider(BaseSpider):
                 yield product_size_info
         sale_num = re.search("sellCount\":([0-9])*",response.body)
         value_num = re.search("rateCounts\":([0-9])*",response.body)
-        if value_num:
+        if value_num and value_num != None :
             product_sale_value["value_num"] = int(value_num.group(1))
         else:
             product_sale_value["value_num"] = -1
-        if sale_num:
+        if sale_num and value_num != None :
             product_sale_value["sale_num"] = int(sale_num.group(1))
         else:
             product_sale_value["sale_num"] = -1
