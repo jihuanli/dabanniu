@@ -1,11 +1,11 @@
 #!/bin/bash
 git add .
-git commit -m "auto-commit"
-set spider_base_name = "spider"
+git commit -m "auto"
+spider_base_name="spider"
 for ((i=1;i<31;i++));do
 {
-  set spider_name = ${spider_base_name}${i} 
-  echo $spider_name
-  #git push $spider_name 
+  spider_name=$spider_base_name$i 
+  echo "push $spider_name"
+  git push $spider_name& 
 }
 done
