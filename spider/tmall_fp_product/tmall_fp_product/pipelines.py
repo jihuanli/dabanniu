@@ -71,5 +71,5 @@ class TmallFpProductPipeline(object):
         return sql
 
     def sale_value(self,item):
-        sql = "update tmall_common set sale_num = %s,value_num = %s where productId=%s;" % (item['sale_num'],item['value_num'],long(item['productId']))
+        sql = "update tmall set sale_num = %s,value_num = %s where productId=%s;" % (item['sale_num'],item['value_num'],long(item['productId']))
         return sql
