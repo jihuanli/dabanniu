@@ -31,3 +31,8 @@ cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/$spider_name/$spider_name/spiders
 ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
 scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
 
+spider_name="tmall_fp_product"
+cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/spider/$spider_name/$spider_name/spiders
+ps -ef | grep scrapy | grep $spider_name | awk '{print $2}' | xargs -n 1 -r kill -9
+scrapy crawl $spider_name >"$OPENSHIFT_DATA_DIR/$spider_name""_log.txt" 2>&1 &
+
