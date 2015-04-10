@@ -62,12 +62,13 @@ class TmallFpProductPipeline(object):
 
     def detail(self,item):
         md5_str=GetStringMD5(str(item['productId'])+str(item['color_name'])+str(item['standard']))
+        self.md = md5_str
         sql =  "insert into tmall_product_size(productId,origin_price,standard,skuId,color_big_img,color_little_img,color_name,stock,md5)values(%s,%s,'%s',%s,'%s','%s','%s',%s,'%s');" % (long(item['productId']),float(item['origin_price']),TransformSQLString(str(item['standard'])),item['skuId'],TransformSQLString(str(item['color_big_img'])),TransformSQLString(str(item['color_little_img'])),TransformSQLString(str(item['color_name'])),item['stock'],md5_str)
         sql_update = "update tmall_product_size set origin_price = %s,stock = %s where productId=%s and md5='%s';" % (float(item['origin_price']),item['stock'],long(item['productId']),md5_str)
         return sql+"\n"+sql_update
 
     def size(self,item):
-        sql = "update tmall_product_size set promot_price ='%s' where productId=%s and md5='%s';" % (TransformSQLString(str(item['promot_price'])),long(item['productId']),md5_str)
+        sql = "update tmall_product_size set promot_price ='%s' where productId=%s and skuId=%s;" % (TransformSQLString(str(item['promot_price'])),long(item['productId']),item['skuId'])
         return sql
 
     def sale_value(self,item):
