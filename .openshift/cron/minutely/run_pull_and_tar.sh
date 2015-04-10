@@ -6,3 +6,5 @@ cd $OPENSHIFT_DEPLOYMENTS_DIR/201*/repo/sh
 ./kimissValue_tar_files.sh &
 ./tmall_auto_pull.sh &
 ./tmall_tar_files.sh &
+./tmall_fp_auto_pull.sh &
+./tmall_fp_tar_files.sh &
