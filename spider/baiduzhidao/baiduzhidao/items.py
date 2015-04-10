@@ -23,12 +23,14 @@ class ZhidaoQuestion(Item):
     isFinish = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 class QuestionViewNum(Item):
     questionId = Field()
     viewNum = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 class ZhidaoAnswer(Item):
     questionId = Field()
@@ -40,6 +42,7 @@ class ZhidaoAnswer(Item):
     isBest = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 
 class RelatedQuestion(Item):
@@ -50,6 +53,7 @@ class RelatedQuestion(Item):
     time = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 class RelatedTopic(Item):
     questionId = Field()
@@ -59,15 +63,18 @@ class RelatedTopic(Item):
     time = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 class QuestionPic(Item):
     questionId = Field()
     picUrl = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()
 
 class AnswerPic(Item):
     answerId = Field()
     picUrl = Field()
     product_id = Field()
     task_id = Field()
+    task_type = Field()

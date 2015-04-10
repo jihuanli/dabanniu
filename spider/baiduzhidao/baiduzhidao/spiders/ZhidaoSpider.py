@@ -60,7 +60,10 @@ class ZhidaoSpider(Spider):
             meta["task_id"] = task_json_data[0]['taskId']
             meta["product_id"] = task_json_data[0]['productId']
             meta["keyword"] = task_json_data[0]["keyword"]
+            if task_data.find("type") != -1:
+              meta["task_type"] = task_json_data[0]['type'] 
             start_url = self.zhidao_url_prefix + quote(task_json_data[0]['keyword'].encode("gbk"))
+            print start_url
             yield Request(start_url, meta = meta, callback = self.parse, priority = 5)
 
     def parse_list_page(self, response):
@@ -118,6 +121,7 @@ class ZhidaoSpider(Spider):
         guide['keyword']=response.meta["keyword"]
         guide['product_id'] = response.meta["product_id"]
         guide['task_id'] = response.meta["task_id"]
+        guide['task_type'] = response.meta["task_type"]
         yield guide
 
         for picUrl in hxs.xpath('//div[@id="wgt-ask"]/div/p/a/@href').extract():
@@ -127,6 +131,7 @@ class ZhidaoSpider(Spider):
 
             qp['product_id'] = response.meta["product_id"]
             qp['task_id'] = response.meta["task_id"]
+            qp['task_type'] = response.meta["task_type"]
             yield qp
 
         if guide['isFinish']==0:
@@ -143,6 +148,7 @@ class ZhidaoSpider(Spider):
             best['isBest'] = 1
             best['product_id'] = response.meta["product_id"]
             best['task_id'] = response.meta["task_id"]
+            best['task_type'] = response.meta["task_type"]
 
             wordReplace = first_item(ba.xpath('.//div[@class="bd answer"]/div[@class="line content"]/pre/img').extract())
             if wordReplace:
@@ -164,6 +170,7 @@ class ZhidaoSpider(Spider):
             best['time'] =  ba.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
             best['likeNum'] =  first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
             best['answerId'] = first_item(ba.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
+            best['task_type'] = response.meta["task_type"]
             yield best
             for picUrl in ba.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
                 bap = AnswerPic()
@@ -171,6 +178,7 @@ class ZhidaoSpider(Spider):
                 bap['task_id'] = response.meta["task_id"]
                 bap['answerId'] = best['answerId']
                 bap['picUrl'] = picUrl
+                bap['task_type'] = response.meta["task_type"]
                 yield bap
     
         ra = hxs.xpath('.//div[@class="wgt-recommend "]')
@@ -202,6 +210,7 @@ class ZhidaoSpider(Spider):
             best['time'] =  ra.xpath('..//div[@class="hd line mb-10"]/span[@class="grid-r f-aid pos-time mt-20"]/text()').extract()[1].strip()
             best['likeNum'] =  first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@data-evaluate').extract())
             best['answerId'] = first_item(ra.xpath('.//div[@class="bd answer"]/div/div/span[@class="evaluate evaluate-32"]/@id').re('evaluate-([0-9]+)'))
+            best['task_type'] = response.meta["task_type"]
             yield best
             for picUrl in ra.xpath('.//div[@class="bd answer"]/div/div[@class="best-text mb-10"]/p/a/@href').extract():
                 bap = AnswerPic()
@@ -209,6 +218,7 @@ class ZhidaoSpider(Spider):
                 bap['task_id'] = response.meta["task_id"]
                 bap['answerId'] = best['answerId']
                 bap['picUrl'] = picUrl
+                bap['task_type'] = response.meta["task_type"]
                 yield bap
     
         for node in hxs.xpath('//div[@id="wgt-answers"]/div/div[@class="line"]/div[contains(@class,"content")]'):
@@ -236,6 +246,7 @@ class ZhidaoSpider(Spider):
             answer['likeNum'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@data-evaluate').extract())
             answer['answerId'] =  first_item(node.xpath('.//div/span[@class="evaluate"]/@id').re('evaluate-([0-9]+)'))
             answer['isBest'] = 0 
+            answer['task_type'] = response.meta["task_type"]
             yield answer
             for picUrl in node.xpath('.//div[@class="answer-text mb-10"]/p/a/@href').extract():
                 ap = AnswerPic()
@@ -243,20 +254,22 @@ class ZhidaoSpider(Spider):
                 ap['task_id'] = response.meta["task_id"]
                 ap['answerId'] = answer['answerId']
                 ap['picUrl'] = picUrl
+                ap['task_type'] = response.meta["task_type"]
                 yield ap
 
         for node in hxs.xpath('//div[@id="wgt-related"]/div/ul/li'):
-             rq = RelatedQuestion()
-             rq['product_id'] = response.meta["product_id"]
-             rq['task_id'] = response.meta["task_id"]
-             rq['questionId'] = questionId
-             rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
-             rq['time'] =  first_item(node.xpath('.//span/text()').extract())
-             rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
-             rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
-             if not rq['likeNum']:
-                 rq['likeNum'] = 0
-             yield rq
+            rq = RelatedQuestion()
+            rq['product_id'] = response.meta["product_id"]
+            rq['task_id'] = response.meta["task_id"]
+            rq['questionId'] = questionId
+            rq['relatedId'] = first_item(node.xpath('.//a/@data-qid').extract())
+            rq['time'] =  first_item(node.xpath('.//span/text()').extract())
+            rq['title'] =  self.html_tag_pattern.sub("",first_item(node.xpath('.//a').extract()))
+            rq['likeNum'] = first_item(node.xpath('.//em/span/text()').extract())
+            if not rq['likeNum']:
+                rq['likeNum'] = 0
+            rq['task_type'] = response.meta["task_type"]
+            yield rq
 
         for node in hxs.xpath('//div[@id="wgt-topic"]/ul/li'):
             rq = RelatedTopic()
@@ -269,10 +282,11 @@ class ZhidaoSpider(Spider):
             rq['likeNum'] = first_item(node.xpath('.//span[@class="ml-5 f-red"]/text()').extract())
             if not rq['likeNum']:
                 rq['likeNum'] = 0
+            rq['task_type'] = response.meta["task_type"]
             yield rq
     def parse(self, response):
         self.have_fetch_set.clear()
-        meta=response.meta
+        meta = response.meta
         if not meta.get("product_id"):
             log.err("===================Error... missing product_id")
         return self.parse_list_page(response)

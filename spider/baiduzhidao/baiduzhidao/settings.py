@@ -27,7 +27,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 #the item pipes place here
 ITEM_PIPELINES = [
-	'baiduzhidao.pipelines.BaiduzhidaoPipeline'
+	'baiduzhidao.pipelines.BaiduzhidaoPipeline',
 ]
 
 DEPTH_PRIORITY = 0
@@ -75,6 +75,6 @@ RETRY_HTTP_CODES = [500, 503, 504, 400, 408]
 RETRY_PRIORITY_ADJUST = -1
 
 #log  CRITICAL, ERROR, WARNING, INFO, DEBUG
-LOG_LEVEL = "WARNING"
+LOG_LEVEL = "INFO"
 LOG_FILE = "zhidao.log"
 
