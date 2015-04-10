@@ -1,7 +1,7 @@
 #coding:UTF-8
 from scrapy.http import Request,Response
 from scrapy.selector import HtmlXPathSelector
-from scrapy.spider import BaseSpider 
+from scrapy.spider import Spider 
 from scrapy.log import err
 import re
 import os
@@ -11,7 +11,7 @@ import httplib
 from tmall_fp_product.items import ProductCommonItem,ProductImgItem,ProductDetailItem,ProductSizeItem,ProductSaleValueItem
 
 
-class TmallFpProductSpider(BaseSpider): 
+class TmallFpProductSpider(Spider): 
     name = "tmall_fp_product"
     allow_domain = ["tmall"]
     seller_name = ["better","purplelabel","qcf69","sukistar","hkyuhe"]
@@ -263,6 +263,3 @@ class TmallFpProductSpider(BaseSpider):
         product_sale_value["taskId"] = response.meta["taskId"]
         yield product_sale_value 
      
-   
-   
-

@@ -23,7 +23,11 @@ CONCURRENT_REQUESTS_PER_IP = 0
 DOWNLOAD_TIMEOUT = 180
 DOWNLOADER_DEBUG = True
 DOWNLOAD_DELAY=2
-ITEM_PIPELINES=['tmall_fp_product.pipelines.TmallFpProductPipeline']
+TELNETCONSOLE_ENABLED = 0
+WEBSERVICE_ENABLED = 0
+ITEM_PIPELINES = { 
+    'tmall_fp_product.pipelines.TmallFpProductPipeline': 300, 
+}
 
 LOG_LEVEL = "WARNING"
 LOG_FILE = "tmall_fp_product.log"
